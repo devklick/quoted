@@ -1,0 +1,138 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in library 'quoted_db'",
+      "cargo": {
+        "args": ["test", "--no-run", "--lib", "--package=quoted_db"],
+        "filter": {
+          "name": "quoted_db",
+          "kind": "lib"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in library 'quoted_db_entity'",
+      "cargo": {
+        "args": ["test", "--no-run", "--lib", "--package=quoted_db_entity"],
+        "filter": {
+          "name": "quoted_db_entity",
+          "kind": "lib"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'quoted_db_seeder'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=quoted_db_seeder",
+          "--package=quoted_db_seeder"
+        ],
+        "filter": {
+          "name": "quoted_db_seeder",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'quoted_api'",
+      "cargo": {
+        "args": ["build", "--bin=quoted_api", "--package=quoted_api"],
+        "filter": {
+          "name": "quoted_api",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'quoted_db_seeder'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=quoted_db_seeder",
+          "--package=quoted_db_seeder"
+        ],
+        "filter": {
+          "name": "quoted_db_seeder",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in library 'quoted_db_migration'",
+      "cargo": {
+        "args": ["test", "--no-run", "--lib", "--package=quoted_db_migration"],
+        "filter": {
+          "name": "quoted_db_migration",
+          "kind": "lib"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'quoted_db_migration'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=quoted_db_migration",
+          "--package=quoted_db_migration"
+        ],
+        "filter": {
+          "name": "quoted_db_migration",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'quoted_db_migration'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=quoted_db_migration",
+          "--package=quoted_db_migration"
+        ],
+        "filter": {
+          "name": "quoted_db_migration",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

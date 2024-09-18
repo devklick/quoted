@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = [
+    "quoted_db",
+    "quoted_db_entity",
+    "quoted_db_seeder",
+    "quoted_db_migration",
+    "quoted_api",
+    "quoted_api_models",
+]

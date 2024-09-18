@@ -1,0 +1,17 @@
+[package]
+name = "quoted_db_migration"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "quoted_db_migration"
+path = "src/lib.rs"
+
+[dependencies]
+async-std = { version = "1", features = ["attributes", "tokio1"] }
+# quoted_db_entity = { path = "../quoted_db_entity" }
+
+[dependencies.sea-orm-migration]
+version = "1.0.0"
+features = ["runtime-tokio-native-tls", "sqlx-postgres"]

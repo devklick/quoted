@@ -1,0 +1,15 @@
+[package]
+name = "quoted_db"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dotenvy = "0.15.7"
+thiserror = "1.0"
+sea-orm = { version = "1.0.0-rc.5", features = [
+    "sqlx-postgres",
+    "runtime-tokio-native-tls",
+    "macros",
+    "debug-print",
+] }
+tracing-subscriber = "0.3.18"

@@ -25,12 +25,8 @@ pub struct RandomQuoteCommand {
 
 impl RunCommand for RandomQuoteCommand {
     async fn run(self) -> Result<(), String> {
-        println!("Getting random quote");
-
         let quote = api::get_random(self.show, self.season, self.episode, self.character).await?;
-
-        println!("{:#?}", quote);
-
+        log::info!("{}", quote);
         Ok(())
     }
 }

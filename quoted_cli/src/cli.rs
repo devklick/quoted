@@ -16,4 +16,7 @@ pub enum Commands {
 pub struct Args {
     #[command(subcommand)]
     pub command: Commands,
+
+    #[arg(long, help = "Enables application logging", global = true)]
+    pub verbose: bool,
 }

@@ -18,7 +18,7 @@ pub async fn get_random(
     };
 
     let query_string = serde_urlencoded::to_string(request).or(Err("Error building query"))?;
-    let url = BASE_URL.to_owned() + "/random" + &query_string;
+    let url = BASE_URL.to_owned() + "/random" + "?" + &query_string;
     let client = Client::new();
     let request = client.get(url);
     let response = request

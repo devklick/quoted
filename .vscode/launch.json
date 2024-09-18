@@ -61,7 +61,7 @@
           "kind": "bin"
         }
       },
-      "args": ["random"],
+      "args": ["random", "--show", "Family Guy"],
       "cwd": "${workspaceFolder}"
     },
     {

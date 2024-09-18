@@ -53,6 +53,20 @@
     {
       "type": "lldb",
       "request": "launch",
+      "name": "Debug executable 'quoted_cli'",
+      "cargo": {
+        "args": ["build", "--bin=quoted_cli", "--package=quoted_cli"],
+        "filter": {
+          "name": "quoted_cli",
+          "kind": "bin"
+        }
+      },
+      "args": ["random"],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
       "name": "Debug executable 'quoted_api'",
       "cargo": {
         "args": ["build", "--bin=quoted_api", "--package=quoted_api"],

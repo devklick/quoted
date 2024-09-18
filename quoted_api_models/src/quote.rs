@@ -2,11 +2,30 @@ use sea_orm::FromQueryResult;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone, FromQueryResult)]
-pub struct QuoteDto {
+pub struct RandomQuoteResponse {
     pub show_name: String,
     pub character_name: String,
     pub season_no: i32,
     pub episode_no: i32,
     pub episode_name: Option<String>,
     pub quote_text: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct RandomQuoteRequest {
+    pub show_name: Option<String>,
+    pub season_no: Option<i32>,
+    pub episode_no: Option<i32>,
+    pub character_name: Option<String>,
+}
+
+impl Default for RandomQuoteRequest {
+    fn default() -> Self {
+        Self {
+            show_name: Default::default(),
+            season_no: Default::default(),
+            episode_no: Default::default(),
+            character_name: Default::default(),
+        }
+    }
 }

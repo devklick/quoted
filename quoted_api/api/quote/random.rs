@@ -3,7 +3,7 @@ use quoted_api::{
     api_response::{ErrorResult, SuccessResult, VercelResponse},
     hello_world,
 };
-use quoted_api_models::quote::QuoteDto;
+use quoted_api_models::quote::{RandomQuoteRequest, RandomQuoteResponse};
 use quoted_db::get_default_connection;
 use quoted_db_entity as entity;
 use sea_orm::{
@@ -18,14 +18,6 @@ use vercel_runtime::{run, Body, Error, Request, Response};
 #[derive(Serialize, Deserialize)]
 struct MyResponse {
     message: String,
-}
-
-#[derive(Debug, Deserialize)]
-struct RandomQuoteQueryParams {
-    show_name: Option<String>,
-    season_no: Option<i32>,
-    episode_no: Option<i32>,
-    character_name: Option<String>,
 }
 
 #[tokio::main]
@@ -47,8 +39,13 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     let db = get_default_connection().await?;
 
     println!("Parsing query params");
-    let query_params =
-        serde_urlencoded::from_str::<RandomQuoteQueryParams>(req.uri().query().unwrap()).unwrap();
+    let query_params = match req.uri().query() {
+        None => RandomQuoteRequest::default(),
+        Some(query) => match serde_urlencoded::from_str::<RandomQuoteRequest>(query) {
+            Ok(query) => query,
+            Err(_) => return ErrorResult::bad_request("Invalid query parameters").vercel(),
+        },
+    };
 
     println!("{:#?}", query_params);
 
@@ -91,7 +88,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     let stmt = db.get_database_backend().build(&query);
 
     println!("Executing query");
-    let quote = QuoteDto::find_by_statement(stmt).one(&db).await;
+    let quote = RandomQuoteResponse::find_by_statement(stmt).one(&db).await;
 
     if let Ok(quote) = quote {
         if let Some(quote) = quote {

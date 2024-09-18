@@ -6,5 +6,5 @@ members = [
     "quoted_db_seeder",
     "quoted_db_migration",
     "quoted_api",
-    "quoted_api_models",
+    "quoted_api_models", "quoted_cli",
 ]

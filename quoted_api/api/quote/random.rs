@@ -41,12 +41,18 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
 }
 
 async fn get(req: Request) -> Result<Response<Body>, Error> {
+    println!("Request received";
+
+    println!("Getting DB Connection";
     let db = get_default_connection().await?;
+
+    println!("Parsing query params";
     let query_params =
         serde_urlencoded::from_str::<RandomQuoteQueryParams>(req.uri().query().unwrap()).unwrap();
 
     println!("{:#?}", query_params);
 
+    println!("Building query";
     let mut query = entity::quote::Entity::find()
         .inner_join(entity::episode::Entity)
         .inner_join(entity::season::Entity)
@@ -84,14 +90,17 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     let stmt = db.get_database_backend().build(&query);
 
+    println!("Executing query");
     let quote = QuoteDto::find_by_statement(stmt).one(&db).await;
 
     if let Ok(quote) = quote {
         if let Some(quote) = quote {
+            println!("Returning result");
             return SuccessResult::ok(quote).vercel();
         }
+        println!("No match found");
         return ErrorResult::bad_request("Quote not found").vercel();
     }
-
+    println!("DB Returned error");
     return ErrorResult::server_error("Error finding random quote").vercel();
 }

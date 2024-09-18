@@ -1,6 +1,11 @@
 use quoted_db_entity::{episode, quote, season, show};
 use sea_orm::{DatabaseConnection, Set};
 
+// TODO: Refactor to insert many where possible.
+// Need to try and reduce the calls to the DB during the seeding process.
+// Perhaps rather than calling the DB to get an ID of a record we already know exists,
+// it can be fetched once and stored in memory.
+
 use crate::{
     helper::{
         create_character_for_show, get_id_for_character, get_id_for_episode, get_id_for_season,

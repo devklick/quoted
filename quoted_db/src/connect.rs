@@ -10,6 +10,7 @@ enum ConnectionEnvVar {
     User,
     Password,
     Url,
+    Name,
 }
 
 impl ToString for ConnectionEnvVar {
@@ -20,6 +21,7 @@ impl ToString for ConnectionEnvVar {
             ConnectionEnvVar::User => "DATABASE_USER".to_owned(),
             ConnectionEnvVar::Password => "DATABASE_PASSWORD".to_owned(),
             ConnectionEnvVar::Url => "DATABASE_URL".to_owned(),
+            ConnectionEnvVar::Name => "DATABASE_NAME".to_owned(),
         }
     }
 }
@@ -33,6 +35,24 @@ struct ConnectionParams {
     database: String,
 }
 
+/// Returns a new `DatabaseConnection` using values from env vars.
+///
+/// If `DATABASE_URL` is present, it will be used.
+///
+/// Otherwise, the following env vars are expected and a connection URL will be
+/// build from them:
+///
+/// - `DATABASE_HOST`
+/// - `DATABASE_PORT`
+/// - `DATABASE_USER`
+/// - `DATABASE_PASSWORD`
+/// - `DATABASE_NAME`
+///
+/// # Errors
+///
+/// When any required env vars are missing or invalid.
+///
+/// When a connection the database cannot be established.
 pub async fn get_default_connection() -> Result<DatabaseConnection, DBError> {
     let connection_string = get_connection_string()?;
 
@@ -53,8 +73,6 @@ pub async fn get_default_connection() -> Result<DatabaseConnection, DBError> {
 /// env vars are not set.
 ///
 /// When one of the destructured env vars is of the wrong type.
-///
-/// This function will return an error if .
 fn get_connection_string() -> Result<String, DBError> {
     if let Some(url) = get_optional_env_var(ConnectionEnvVar::Url)? {
         return Ok(url);
@@ -67,10 +85,21 @@ fn get_connection_string() -> Result<String, DBError> {
     ))
 }
 
+/// Pulls out the following env vars values:
+///
+/// - `DATABASE_HOST`
+/// - `DATABASE_PORT`
+/// - `DATABASE_USER`
+/// - `DATABASE_PASSWORD`
+/// - `DATABASE_NAME`
+///
+/// # Errors
+///
+/// If any of these env vars are missing or invalid.
 fn get_connection_params() -> Result<ConnectionParams, DBError> {
     return Ok(ConnectionParams {
         protocol: "postgres".to_owned(),
-        database: "quoted".to_owned(),
+        database: get_required_env_var::<String>(ConnectionEnvVar::Name)?,
         host: get_required_env_var::<String>(ConnectionEnvVar::Host)?,
         password: get_required_env_var::<String>(ConnectionEnvVar::Password)?,
         port: get_required_env_var::<u16>(ConnectionEnvVar::Port)?,
@@ -78,6 +107,11 @@ fn get_connection_params() -> Result<ConnectionParams, DBError> {
     });
 }
 
+/// Gets the value from the specified `env_var` and converts it to `T`.
+///
+/// # Errors
+///
+/// If the env var is missing or cannot be converted to `T`.
 fn get_required_env_var<T>(env_var: ConnectionEnvVar) -> Result<T, DBError>
 where
     T: FromStr,
@@ -92,6 +126,11 @@ where
     return Ok(parsed);
 }
 
+/// Gets the specified `env_var`, and if it's found, converts it to `T`.
+///
+/// # Errors
+///
+/// If the env var cannot be converted to `T`
 fn get_optional_env_var<T>(env_var: ConnectionEnvVar) -> Result<Option<T>, DBError>
 where
     T: FromStr,

@@ -41,18 +41,18 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
 }
 
 async fn get(req: Request) -> Result<Response<Body>, Error> {
-    println!("Request received";
+    println!("Request received");
 
-    println!("Getting DB Connection";
+    println!("Getting DB Connection");
     let db = get_default_connection().await?;
 
-    println!("Parsing query params";
+    println!("Parsing query params");
     let query_params =
         serde_urlencoded::from_str::<RandomQuoteQueryParams>(req.uri().query().unwrap()).unwrap();
 
     println!("{:#?}", query_params);
 
-    println!("Building query";
+    println!("Building query");
     let mut query = entity::quote::Entity::find()
         .inner_join(entity::episode::Entity)
         .inner_join(entity::season::Entity)

@@ -15,6 +15,7 @@ path = "api/quote/random.rs"
 actix-rt = "2.10.0"
 actix-web = "4.9.0"
 dotenvy = "0.15.7"
+openssl = { version = "0.10.59", features = ["vendored"] }
 quoted_db = { path = "../quoted_db" }
 quoted_db_entity = { path = "../quoted_db_entity" }
 quoted_api_models = { path = "../quoted_api_models" }

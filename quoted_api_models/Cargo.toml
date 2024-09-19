@@ -2,6 +2,7 @@
 name = "quoted_api_models"
 version = "0.1.0"
 edition = "2021"
+publish = true
 
 [dependencies]
 serde = { version = "1.0.210", features = ["derive"] }

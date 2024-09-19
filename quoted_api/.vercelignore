@@ -1,1 +1,6 @@
 target/
+.vscode/
+quoted_cli/
+quoted_db_migration/
+quoted_db_seeder/
+.env

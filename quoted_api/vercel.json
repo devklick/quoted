@@ -3,8 +3,7 @@
   "outputDirectory": "public",
   "functions": {
     "api/**/*.rs": {
-      "runtime": "vercel-rust@4.0.7",
-      "includeFiles": "../target/release/quoted_api_models.d"
+      "runtime": "vercel-rust@4.0.7"
     }
   }
 }

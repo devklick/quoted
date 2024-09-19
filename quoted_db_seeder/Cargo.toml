@@ -2,6 +2,7 @@
 name = "quoted_db_seeder"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 dotenvy = "0.15.7"

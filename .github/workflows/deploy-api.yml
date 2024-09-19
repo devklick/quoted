@@ -32,24 +32,21 @@ jobs:
       
       - name: Write cargo config (forces a specific target)
         run: mkdir .cargo && printf "[build]\ntarget = \"x86_64-unknown-linux-musl\"\n" > .cargo/config.toml
-      
-      - name: List Contents - work
-        run: ls /home/runner/work/
-
-      - name: List Contents - quoted(1)
-        run: ls /home/runner/work/quoted/
-
-      - name: List Contents - quoted(2)
-        run: ls /home/runner/work/quoted/quoted/
-
-      - name: List Contents - target
-        run: ls /home/runner/work/quoted/quoted/target/
-
-      - name: List Contents - release
-        run: ls /home/runner/work/quoted/quoted/target/release/
 
       - name: Pull Vercel Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: List Contents - quoted(2)
+        if: always()
+        run: ls /home/runner/work/quoted/quoted/
+
+      - name: List Contents - target
+        if: always()
+        run: ls /home/runner/work/quoted/quoted/target/
+
+      - name: List Contents - release
+        if: always()
+        run: ls /home/runner/work/quoted/quoted/target/release/
       
       - name: Build
         run: vc build --prod --token=${{ secrets.VERCEL_TOKEN }}

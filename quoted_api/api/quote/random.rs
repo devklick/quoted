@@ -1,8 +1,5 @@
 use http::Method;
-use quoted_api::{
-    api_response::{ErrorResult, SuccessResult, VercelResponse},
-    hello_world,
-};
+use quoted_api::api_response::{ErrorResult, SuccessResult, VercelResponse};
 use quoted_api_models::quote::{RandomQuoteRequest, RandomQuoteResponse};
 use quoted_db::get_default_connection;
 use quoted_db_entity as entity;

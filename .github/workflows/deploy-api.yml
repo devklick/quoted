@@ -20,7 +20,7 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v2
         with:
           packages: musl-tools
-        version: "1.0"
+          version: "1.0"
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Write cargo config (forces a specific target)

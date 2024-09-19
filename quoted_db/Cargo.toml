@@ -9,7 +9,7 @@ dotenvy = "0.15.7"
 thiserror = "1.0"
 sea-orm = { version = "1.0.0-rc.5", features = [
     "sqlx-postgres",
-    "runtime-tokio-native-tls",
+    "runtime-tokio-rustls",
     "macros",
     "debug-print",
 ] }

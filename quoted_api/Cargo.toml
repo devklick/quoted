@@ -21,7 +21,7 @@ quoted_api_models = { path = "../quoted_api_models" }
 thiserror = "1.0.63"
 sea-orm = { version = "1.0.0-rc.5", features = [
     "sqlx-postgres",
-    "runtime-tokio-native-tls",
+    "runtime-tokio-rustls",
     "macros",
     "debug-print",
 ] }
@@ -32,3 +32,4 @@ vercel_runtime = "1.1.4"
 tokio = { version = "1.40.0", features = ["fs", "macros", "rt-multi-thread"] }
 http = "1.1.0"
 serde_urlencoded = "0.7.1"
+openssl = { version = "0.10.59", features = ["vendored"] }

@@ -21,9 +21,9 @@ jobs:
         with:
           packages: musl-tools
           version: "1.0"
-      - name: Install Vercel CLI
       - name: Install openssl
         run: sudo apt-get install libssl-dev
+      - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Write cargo config (forces a specific target)
         run: mkdir .cargo && printf "[build]\ntarget = \"x86_64-unknown-linux-musl\"\n" > .cargo/config.toml

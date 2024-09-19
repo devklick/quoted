@@ -35,6 +35,9 @@ jobs:
 
       - name: Pull Vercel Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      
+      - name: Build
+        run: vc build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: List Contents - quoted(2)
         if: always()
@@ -47,9 +50,6 @@ jobs:
       - name: List Contents - release
         if: always()
         run: ls /home/runner/work/quoted/quoted/target/release/
-      
-      - name: Build
-        run: vc build --prod --token=${{ secrets.VERCEL_TOKEN }}
       
       - name: Deploy
         run: vc deploy --prod --prebuilt --token=${{ secrets.VERCEL_TOKEN }}

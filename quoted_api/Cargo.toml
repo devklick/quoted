@@ -11,6 +11,10 @@ path = "src/lib.rs"
 name = "quote"
 path = "api/quote/random.rs"
 
+[[bin]]
+name = "shows"
+path = "api/shows.rs"
+
 [dependencies]
 actix-rt = "2.10.0"
 actix-web = "4.9.0"

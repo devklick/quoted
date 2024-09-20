@@ -9,13 +9,7 @@ use sea_orm::{
     EntityTrait, QueryFilter, QuerySelect, QueryTrait,
 };
 use sea_orm::{ConnectionTrait, FromQueryResult};
-use serde::{Deserialize, Serialize};
 use vercel_runtime::{run, Body, Error, Request, Response};
-
-#[derive(Serialize, Deserialize)]
-struct MyResponse {
-    message: String,
-}
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {

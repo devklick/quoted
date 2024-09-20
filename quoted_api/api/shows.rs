@@ -45,7 +45,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         .column(entity::show::Column::Name)
         .order_by_asc(entity::show::Column::Name)
         .limit(query_params.limit)
-        .offset(query_params.limit * (query_params.page - 1))
+        .offset(query_params.limit * (query_params.page - 1) + 1)
         .as_query()
         .to_owned();
 
@@ -53,12 +53,17 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     let shows = Show::find_by_statement(stmt).all(&db).await;
 
-    if let Ok(shows) = shows {
+    if let Ok(mut shows) = shows {
         println!("Returning result");
+        let has_more = shows.len() > query_params.limit as usize;
+        if has_more {
+            shows = shows.get(0..query_params.limit as usize).unwrap().to_vec();
+        }
         return SuccessResult::ok(PagedData::<Show>::new(
             query_params.page,
             query_params.limit,
             shows,
+            has_more,
         ))
         .vercel();
     }

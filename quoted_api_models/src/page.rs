@@ -41,12 +41,12 @@ impl<T> PagedData<T>
 where
     T: Serialize,
 {
-    pub fn new(page: u64, limit: u64, data: Vec<T>) -> Self {
+    pub fn new(page: u64, limit: u64, data: Vec<T>, has_more: bool) -> Self {
         PagedData::<T> {
             page,
             limit,
             data,
-            has_more: false,
+            has_more,
         }
     }
 }

@@ -1,5 +1,8 @@
 use http::Method;
-use quoted_api::api_response::{ErrorResult, SuccessResult, VercelResponse};
+use quoted_api::{
+    api_response::{ErrorResult, SuccessResult, VercelResponse},
+    setup::setup,
+};
 use quoted_api_models::{
     page::{GetShowsRequest, PagedData, PagedRequest},
     show::Show,
@@ -12,6 +15,7 @@ use vercel_runtime::{run, Body, Error, Request, Response};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
+    setup();
     run(handler).await
 }
 

@@ -27,7 +27,6 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     println!("Getting DB Connection");
     let db = get_default_connection().await?;
-    enable_query_logging();
 
     println!("Parsing query params");
     let query_params = match req.uri().query() {
@@ -63,6 +62,6 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         ))
         .vercel();
     }
-    println!("DB Returned error, {:#?}", shows);
+    println!("DB Returned error");
     return ErrorResult::server_error("Error finding shows").vercel();
 }

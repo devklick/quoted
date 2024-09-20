@@ -63,6 +63,6 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         ))
         .vercel();
     }
-    println!("DB Returned error");
+    println!("DB Returned error, {:#?}", shows);
     return ErrorResult::server_error("Error finding shows").vercel();
 }

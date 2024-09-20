@@ -4,7 +4,7 @@ use quoted_api_models::{
     page::{GetShowsRequest, PagedData, PagedRequest},
     show::Show,
 };
-use quoted_db::{enable_query_logging, get_default_connection};
+use quoted_db::get_default_connection;
 use quoted_db_entity as entity;
 use sea_orm::{ConnectionTrait, FromQueryResult};
 use sea_orm::{EntityTrait, QueryOrder, QuerySelect, QueryTrait};

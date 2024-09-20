@@ -9,8 +9,8 @@ pub async fn get_default_connection() -> Result<DatabaseConnection, DBError> {
 }
 
 pub fn enable_query_logging() {
-    tracing_subscriber::fmt()
+    let _ = tracing_subscriber::fmt()
         .with_max_level(tracing_subscriber::filter::LevelFilter::DEBUG)
         .with_test_writer()
-        .init();
+        .try_init();
 }

@@ -4,7 +4,7 @@ use quoted_api_models::{
     page::{GetShowsRequest, PagedData, PagedRequest},
     show::Show,
 };
-use quoted_db::get_default_connection;
+use quoted_db::{enable_query_logging, get_default_connection};
 use quoted_db_entity as entity;
 use sea_orm::{ConnectionTrait, FromQueryResult};
 use sea_orm::{EntityTrait, QueryOrder, QuerySelect, QueryTrait};
@@ -27,6 +27,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     println!("Getting DB Connection");
     let db = get_default_connection().await?;
+    enable_query_logging();
 
     println!("Parsing query params");
     let query_params = match req.uri().query() {

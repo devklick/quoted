@@ -21,6 +21,14 @@ jobs:
       
       - name: Build
         run: vc build --prod --token=${{ secrets.VERCEL_TOKEN }} --debug
+
+      - name: Log .vercel contents
+        if: always()
+        run: tree .vercel
+
+      - name: Log target contents
+        if: always()
+        run: tree target
       
       - name: Deploy
         run: vc deploy --prod --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --debug

@@ -48,8 +48,8 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         .select_only()
         .column(entity::show::Column::Name)
         .order_by_asc(entity::show::Column::Name)
-        .limit(query_params.limit)
-        .offset(query_params.limit * (query_params.page - 1) + 1)
+        .limit(query_params.limit + 1)
+        .offset(query_params.limit * (query_params.page - 1))
         .as_query()
         .to_owned();
 

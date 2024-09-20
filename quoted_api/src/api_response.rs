@@ -80,7 +80,7 @@ impl ErrorResult {
                 key: None,
                 message: Some(message.to_owned()),
             },
-            status_code: 400,
+            status_code: 500,
         }
     }
     pub fn with_key(mut self, key: &str) -> Self {

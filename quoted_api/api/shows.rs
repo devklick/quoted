@@ -43,7 +43,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     println!("Building query");
     let query = entity::show::Entity::find()
         .select_only()
-        .column_as(entity::show::Column::Name, "show_name")
+        .column(entity::show::Column::Name)
         .order_by_asc(entity::show::Column::Name)
         .limit(query_params.limit)
         .offset(query_params.limit * (query_params.page - 1))

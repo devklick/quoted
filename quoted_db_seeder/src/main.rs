@@ -1,30 +1,25 @@
+mod auth;
+mod cli;
+mod client;
+mod error;
 mod helper;
 mod parse_csv;
 mod seeder;
+mod sheets;
 
+use clap::Parser;
 use dotenvy::dotenv;
+use error::SeedError;
+use google_sheets4 as sheets4;
+use quoted_db::{enable_query_logging, get_default_connection};
 use quoted_db_migration::{Migrator, MigratorTrait};
-use sea_orm::DbErr;
-use thiserror::Error;
-
-use parse_csv::CsvError;
-use quoted_db::{enable_query_logging, error::DBError, get_default_connection};
-
-#[derive(Error, Debug)]
-enum SeedError {
-    #[error("Database error")]
-    DBError(#[from] DBError),
-
-    #[error("Database error")]
-    DbErr(#[from] DbErr),
-
-    #[error("CSV Error")]
-    Csv(#[from] CsvError),
-}
+use sheets4::Sheets;
 
 #[tokio::main]
 async fn main() -> Result<(), SeedError> {
-    dotenv().expect("Failed to read .env file");
+    let _ = dotenv();
+
+    let args = cli::Args::parse();
 
     let db = get_default_connection().await?;
     enable_query_logging();
@@ -34,7 +29,12 @@ async fn main() -> Result<(), SeedError> {
     let shows = parse_csv::shows()?;
     seeder::seed_shows(&db, shows).await?;
 
-    let quotes = parse_csv::quotes()?;
+    let client = client::get();
+    let key = auth::get_key(&args.key_path).await?;
+    let auth = auth::get_authenticator(key, &client).await?;
+    let hub = Sheets::new(client, auth);
+    let quotes = sheets::get_quotes(&hub, &args.sheet_id).await?;
+
     seeder::seed_quotes(&db, quotes).await?;
 
     return Ok(());

@@ -1,5 +1,6 @@
 use quoted_db_entity::{episode, quote, season, show};
 use sea_orm::{DatabaseConnection, Set};
+use serde::Deserialize;
 
 // TODO: Refactor to insert many where possible.
 // Need to try and reduce the calls to the DB during the seeding process.
@@ -11,9 +12,34 @@ use crate::{
         create_character_for_show, get_id_for_character, get_id_for_episode, get_id_for_season,
         get_id_for_show, idempotent_insert,
     },
-    parse_csv::{Episode, Quote, Season, Show},
     SeedError,
 };
+
+#[derive(Debug)]
+pub struct Show {
+    pub name: String,
+    pub seasons: Vec<Season>,
+}
+#[derive(Debug)]
+pub struct Season {
+    pub no: i32,
+    pub episodes: Vec<Episode>,
+}
+#[derive(Debug)]
+pub struct Episode {
+    pub no: i32,
+    pub name: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub struct Quote {
+    pub show_name: String,
+    pub season_no: i32,
+    pub episode_no: i32,
+    pub character_name: String,
+    pub quote_text: String,
+}
 
 pub async fn seed_shows(db: &DatabaseConnection, shows: Vec<Show>) -> Result<(), SeedError> {
     for show in shows {

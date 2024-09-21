@@ -2,23 +2,7 @@ use serde::Deserialize;
 use std::{collections::HashMap, io::Cursor};
 use thiserror::Error;
 
-use crate::SeedError;
-
-#[derive(Debug)]
-pub struct Show {
-    pub name: String,
-    pub seasons: Vec<Season>,
-}
-#[derive(Debug)]
-pub struct Season {
-    pub no: i32,
-    pub episodes: Vec<Episode>,
-}
-#[derive(Debug)]
-pub struct Episode {
-    pub no: i32,
-    pub name: Option<String>,
-}
+use crate::seeder::{Episode, Season, Show};
 
 #[derive(Error, Debug)]
 pub enum CsvError {
@@ -33,16 +17,6 @@ struct RawShow {
     season_no: i32,
     episode_no: i32,
     episode_name: Option<String>,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-#[serde(rename_all = "PascalCase")]
-pub struct Quote {
-    pub show_name: String,
-    pub season_no: i32,
-    pub episode_no: i32,
-    pub character_name: String,
-    pub quote_text: String,
 }
 
 pub fn shows() -> Result<Vec<Show>, CsvError> {
@@ -95,15 +69,4 @@ pub fn shows() -> Result<Vec<Show>, CsvError> {
         .collect();
 
     return Ok(shows);
-}
-
-pub fn quotes() -> Result<Vec<Quote>, SeedError> {
-    let csv_bytes = Cursor::new(include_bytes!("../data/quotes.csv"));
-    let mut reader = csv::Reader::from_reader(csv_bytes);
-    let quotes = reader
-        .deserialize::<Quote>()
-        .into_iter()
-        .map(|f| f.unwrap())
-        .collect::<Vec<Quote>>();
-    Ok(quotes)
 }

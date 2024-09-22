@@ -39,9 +39,9 @@ pub struct Quote {
     pub quote_text: String,
 }
 
-pub async fn seed_shows(
+pub async fn seed_shows<'a>(
     db: &DatabaseConnection,
-    id_factory: &mut IdFactory,
+    id_factory: &mut IdFactory<'a>,
     shows: Vec<Show>,
 ) -> Result<(), SeedError> {
     for show in shows {
@@ -50,12 +50,12 @@ pub async fn seed_shows(
     Ok(())
 }
 
-async fn seed_show(
+async fn seed_show<'a>(
     db: &DatabaseConnection,
-    id_factory: &mut IdFactory,
+    id_factory: &mut IdFactory<'a>,
     show: Show,
 ) -> Result<(), SeedError> {
-    let show_id = id_factory.get_id_for_show(&show.name, true).await?;
+    let show_id = id_factory.show.get_id(&show.name, true).await?;
 
     let model = show::ActiveModel {
         name: Set(show.name),
@@ -69,9 +69,9 @@ async fn seed_show(
     Ok(())
 }
 
-async fn seed_seasons(
+async fn seed_seasons<'a>(
     db: &DatabaseConnection,
-    id_factory: &mut IdFactory,
+    id_factory: &mut IdFactory<'a>,
     show_id: &i32,
     seasons: Vec<Season>,
 ) -> Result<(), SeedError> {
@@ -81,15 +81,13 @@ async fn seed_seasons(
     Ok(())
 }
 
-async fn seed_season(
+async fn seed_season<'a>(
     db: &DatabaseConnection,
-    id_factory: &mut IdFactory,
+    id_factory: &mut IdFactory<'a>,
     show_id: &i32,
     season: Season,
 ) -> Result<(), SeedError> {
-    let season_id = id_factory
-        .get_id_for_season(show_id, &season.no, true)
-        .await?;
+    let season_id = id_factory.season.get_id(show_id, &season.no, true).await?;
 
     let model = season::ActiveModel {
         id: Set(season_id),
@@ -105,9 +103,9 @@ async fn seed_season(
     Ok(())
 }
 
-async fn seed_episodes(
+async fn seed_episodes<'a>(
     db: &DatabaseConnection,
-    id_factory: &mut IdFactory,
+    id_factory: &mut IdFactory<'a>,
     show_id: &i32,
     season_id: &i32,
     episodes: Vec<Episode>,
@@ -118,15 +116,16 @@ async fn seed_episodes(
     Ok(())
 }
 
-async fn seed_episode(
+async fn seed_episode<'a>(
     db: &DatabaseConnection,
-    id_factory: &mut IdFactory,
+    id_factory: &mut IdFactory<'a>,
     show_id: &i32,
     season_id: &i32,
     episode: Episode,
 ) -> Result<(), SeedError> {
     let episode_id = id_factory
-        .get_id_for_episode(show_id, season_id, &episode.no, true)
+        .episode
+        .get_id(show_id, season_id, &episode.no, true)
         .await?;
 
     let model = episode::ActiveModel {
@@ -147,9 +146,9 @@ async fn seed_episode(
     Ok(())
 }
 
-pub async fn seed_quotes(
+pub async fn seed_quotes<'a>(
     db: &DatabaseConnection,
-    id_factory: &mut IdFactory,
+    id_factory: &mut IdFactory<'a>,
     quotes: Vec<Quote>,
 ) -> Result<(), SeedError> {
     for quote in quotes {
@@ -158,20 +157,23 @@ pub async fn seed_quotes(
     Ok(())
 }
 
-async fn seed_quote(
+async fn seed_quote<'a>(
     db: &DatabaseConnection,
-    id_factory: &mut IdFactory,
+    id_factory: &mut IdFactory<'a>,
     quote: Quote,
 ) -> Result<(), SeedError> {
-    let show_id = id_factory.get_id_for_show(&quote.show_name, false).await?;
+    let show_id = id_factory.show.get_id(&quote.show_name, false).await?;
     let season_id = id_factory
-        .get_id_for_season(&show_id, &quote.season_no, false)
+        .season
+        .get_id(&show_id, &quote.season_no, false)
         .await?;
     let episode_id = id_factory
-        .get_id_for_episode(&show_id, &season_id, &quote.episode_no, false)
+        .episode
+        .get_id(&show_id, &season_id, &quote.episode_no, false)
         .await?;
     let character_id = id_factory
-        .get_id_for_character(&show_id, &quote.character_name)
+        .character
+        .get_id(&show_id, &quote.character_name)
         .await?;
 
     create_character_for_show(db, id_factory, &show_id, &quote.character_name).await?;

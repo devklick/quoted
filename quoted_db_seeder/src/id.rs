@@ -31,48 +31,38 @@ pub struct EpisodeIdKey {
     episode_no: i32,
 }
 
-pub struct IdCache {
-    character_ids: HashMap<CharacterIdKey, i32>,
-    show_ids: HashMap<ShowIdKey, i32>,
-    season_ids: HashMap<SeasonIdKey, i32>,
-    episode_ids: HashMap<EpisodeIdKey, i32>,
+pub struct ShowIdFactory<'a> {
+    cache: HashMap<ShowIdKey, i32>,
+    db: &'a DatabaseConnection,
+}
+pub struct EpisodeIdFactory<'a> {
+    cache: HashMap<EpisodeIdKey, i32>,
+    db: &'a DatabaseConnection,
+}
+pub struct SeasonIdFactory<'a> {
+    cache: HashMap<SeasonIdKey, i32>,
+    db: &'a DatabaseConnection,
+}
+pub struct CharacterIdFactory<'a> {
+    cache: HashMap<CharacterIdKey, i32>,
+    db: &'a DatabaseConnection,
 }
 
-impl IdCache {
-    pub fn new() -> IdCache {
-        IdCache {
-            character_ids: HashMap::new(),
-            episode_ids: HashMap::new(),
-            season_ids: HashMap::new(),
-            show_ids: HashMap::new(),
-        }
-    }
-}
-
-pub struct IdFactory {
-    id_cache: IdCache,
-    db: DatabaseConnection,
-}
-
-impl IdFactory {
-    pub fn new(db: DatabaseConnection) -> Self {
-        IdFactory {
+impl<'a> ShowIdFactory<'a> {
+    pub fn new(db: &'a DatabaseConnection) -> Self {
+        ShowIdFactory {
             db,
-            id_cache: IdCache::new(),
+            cache: HashMap::new(),
         }
     }
 
-    pub async fn get_id_for_show(
-        &mut self,
-        show_name: &str,
-        allow_new: bool,
-    ) -> Result<i32, DBError> {
+    pub async fn get_id(&mut self, show_name: &str, allow_new: bool) -> Result<i32, DBError> {
         println!("get_id_for_show (show_name={show_name})");
         let key = ShowIdKey {
             show_name: show_name.to_string(),
         };
-        if self.id_cache.show_ids.contains_key(&key) {
-            let id = self.id_cache.show_ids[&key];
+        if self.cache.contains_key(&key) {
+            let id = self.cache[&key];
             println!(
                 "get_id_for_show - found existing id {id} in memory for show_name={show_name}"
             );
@@ -84,12 +74,12 @@ impl IdFactory {
             .column(show::Column::Id)
             .filter(show::Column::Name.eq(show_name))
             .into_tuple::<i32>()
-            .one(&self.db)
+            .one(self.db)
             .await?;
 
         if let Some(id) = id {
             println!("get_id_for_show - found existing id {id} for show_name={show_name}");
-            self.id_cache.show_ids.insert(key, id);
+            self.cache.insert(key, id);
             return Ok(id);
         }
 
@@ -107,21 +97,29 @@ impl IdFactory {
                 .to_owned(),
             )
             .into_tuple::<i32>()
-            .one(&self.db)
+            .one(self.db)
             .await?;
 
         let id = match max {
             Some(m) => m + 1,
             None => 1,
         };
-        self.id_cache.show_ids.insert(key, id);
+        self.cache.insert(key, id);
 
         println!("get_id_for_show - using next id {id} for show_name={show_name}");
 
         return Ok(id);
     }
+}
 
-    pub async fn get_id_for_season(
+impl<'a> SeasonIdFactory<'a> {
+    pub fn new(db: &'a DatabaseConnection) -> Self {
+        SeasonIdFactory {
+            db,
+            cache: HashMap::new(),
+        }
+    }
+    pub async fn get_id(
         &mut self,
         show_id: &i32,
         season_no: &i32,
@@ -132,8 +130,8 @@ impl IdFactory {
             show_id: *show_id,
             season_no: *season_no,
         };
-        if self.id_cache.season_ids.contains_key(&key) {
-            let id = self.id_cache.season_ids[&key];
+        if self.cache.contains_key(&key) {
+            let id = self.cache[&key];
             println!(
                 "get_id_for_season - found existing id {id} in memory for for show_id={show_id}, season_no={season_no}"
             );
@@ -148,12 +146,12 @@ impl IdFactory {
                     .and(season::Column::SeasonNo.eq(*season_no)),
             )
             .into_tuple::<i32>()
-            .one(&self.db)
+            .one(self.db)
             .await?;
 
         if let Some(id) = id {
             println!("get_id_for_season - found existing id {id} for show_id={show_id}, season_no={season_no}");
-            self.id_cache.season_ids.insert(key, id);
+            self.cache.insert(key, id);
             return Ok(id);
         }
 
@@ -171,7 +169,7 @@ impl IdFactory {
                 .to_owned(),
             )
             .into_tuple::<i32>()
-            .one(&self.db)
+            .one(self.db)
             .await?;
 
         let id = match max {
@@ -182,12 +180,20 @@ impl IdFactory {
         println!(
             "get_id_for_season - using next id {id} for show_id={show_id}, season_no={season_no}"
         );
-        self.id_cache.season_ids.insert(key, id);
+        self.cache.insert(key, id);
 
         return Ok(id);
     }
+}
 
-    pub async fn get_id_for_episode(
+impl<'a> EpisodeIdFactory<'a> {
+    pub fn new(db: &'a DatabaseConnection) -> Self {
+        EpisodeIdFactory {
+            db,
+            cache: HashMap::new(),
+        }
+    }
+    pub async fn get_id(
         &mut self,
         show_id: &i32,
         season_id: &i32,
@@ -202,8 +208,8 @@ impl IdFactory {
             season_id: *season_id,
             episode_no: *episode_no,
         };
-        if self.id_cache.episode_ids.contains_key(&key) {
-            let id = self.id_cache.episode_ids[&key];
+        if self.cache.contains_key(&key) {
+            let id = self.cache[&key];
             println!(
                 "get_id_for_episode - found existing id {id} in memory for show_id={show_id}, season_id={season_id}, episode_no={episode_no}"
             );
@@ -220,12 +226,12 @@ impl IdFactory {
                     .and(episode::Column::EpisodeNo.eq(*episode_no)),
             )
             .into_tuple::<i32>()
-            .one(&self.db)
+            .one(self.db)
             .await?;
 
         if let Some(id) = id {
             println!("get_id_for_episode - found existing id {id} for show_id={show_id}, season_id={season_id}, episode_no={episode_no}");
-            self.id_cache.episode_ids.insert(key, id);
+            self.cache.insert(key, id);
             return Ok(id);
         }
         if !allow_new {
@@ -241,7 +247,7 @@ impl IdFactory {
                 .to_owned(),
             )
             .into_tuple::<i32>()
-            .one(&self.db)
+            .one(self.db)
             .await?;
 
         let id = match max {
@@ -252,24 +258,28 @@ impl IdFactory {
         println!(
             "get_id_for_episode - using next id {id} for show_id={show_id}, season_id={season_id}, episode_no={episode_no}"
         );
-        self.id_cache.episode_ids.insert(key, id);
+        self.cache.insert(key, id);
 
         return Ok(id);
     }
+}
 
-    pub async fn get_id_for_character(
-        &mut self,
-        show_id: &i32,
-        character_name: &str,
-    ) -> Result<i32, DBError> {
+impl<'a> CharacterIdFactory<'a> {
+    pub fn new(db: &'a DatabaseConnection) -> Self {
+        CharacterIdFactory {
+            db,
+            cache: HashMap::new(),
+        }
+    }
+    pub async fn get_id(&mut self, show_id: &i32, character_name: &str) -> Result<i32, DBError> {
         println!("get_id_for_character (show_id={show_id}, character_name={character_name})");
 
         let key = CharacterIdKey {
             character_name: character_name.to_string(),
             show_id: *show_id,
         };
-        if self.id_cache.character_ids.contains_key(&key) {
-            let id = self.id_cache.character_ids[&key];
+        if self.cache.contains_key(&key) {
+            let id = self.cache[&key];
             println!(
                 "get_id_for_character - found existing id {id} in memory for show_id={show_id}, character_name={character_name}"
             );
@@ -289,12 +299,12 @@ impl IdFactory {
                     .and(character_show::Column::ShowId.eq(*show_id)),
             )
             .into_tuple::<i32>()
-            .one(&self.db)
+            .one(self.db)
             .await?;
 
         if let Some(id) = id {
             println!("get_id_for_character - found existing id {id} for show_id={show_id}, character_name={character_name}");
-            self.id_cache.character_ids.insert(key, id);
+            self.cache.insert(key, id);
             return Ok(id);
         }
         let max = character::Entity::find()
@@ -307,7 +317,7 @@ impl IdFactory {
                 .to_owned(),
             )
             .into_tuple::<i32>()
-            .one(&self.db)
+            .one(self.db)
             .await?;
 
         let id = match max {
@@ -318,8 +328,26 @@ impl IdFactory {
         println!(
             "get_id_for_character - using next id {id} for show_id={show_id}, character_name={character_name}"
         );
-        self.id_cache.character_ids.insert(key, id);
+        self.cache.insert(key, id);
 
         return Ok(id);
+    }
+}
+
+pub struct IdFactory<'a> {
+    pub show: ShowIdFactory<'a>,
+    pub season: SeasonIdFactory<'a>,
+    pub episode: EpisodeIdFactory<'a>,
+    pub character: CharacterIdFactory<'a>,
+}
+
+impl<'a> IdFactory<'a> {
+    pub fn new(db: &'a DatabaseConnection) -> Self {
+        IdFactory {
+            show: ShowIdFactory::new(db),
+            season: SeasonIdFactory::new(db),
+            episode: EpisodeIdFactory::new(db),
+            character: CharacterIdFactory::new(db),
+        }
     }
 }

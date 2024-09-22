@@ -5,16 +5,14 @@ use sea_orm::{entity::*, DatabaseConnection, EntityTrait};
 
 use crate::id::IdFactory;
 
-pub async fn create_character_for_show(
+pub async fn create_character_for_show<'a>(
     db: &DatabaseConnection,
-    id_factory: &mut IdFactory,
+    id_factory: &mut IdFactory<'a>,
     show_id: &i32,
     character_name: &str,
 ) -> Result<i32, DBError> {
     println!("create_character_for_show, show_id={show_id}, character_name={character_name}");
-    let character_id = id_factory
-        .get_id_for_character(show_id, character_name)
-        .await?;
+    let character_id = id_factory.character.get_id(show_id, character_name).await?;
 
     let character = character::ActiveModel {
         id: Set(character_id),
@@ -50,7 +48,6 @@ pub async fn idempotent_insert<A, I, C>(
 where
     A: ActiveModelTrait + ActiveModelBehavior + Send + 'static,
     <A::Entity as EntityTrait>::Model: IntoActiveModel<A>,
-    // E: EntityTrait + 'static,
     C: IntoIden,
     I: IntoIterator<Item = C>,
 {

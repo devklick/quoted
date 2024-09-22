@@ -26,7 +26,7 @@ async fn main() -> Result<(), SeedError> {
     let db = get_default_connection().await?;
     enable_query_logging();
 
-    let mut id_factory = IdFactory::new(db.clone());
+    let mut id_factory = IdFactory::new(&db);
 
     let client = client::get();
     let key = auth::get_key(&args.key_path).await?;

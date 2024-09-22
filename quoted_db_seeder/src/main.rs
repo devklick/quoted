@@ -3,6 +3,7 @@ mod cli;
 mod client;
 mod error;
 mod helper;
+mod id;
 mod parse_csv;
 mod seeder;
 mod sheets;
@@ -11,6 +12,7 @@ use clap::Parser;
 use dotenvy::dotenv;
 use error::SeedError;
 use google_sheets4 as sheets4;
+use id::IdFactory;
 use quoted_db::{enable_query_logging, get_default_connection};
 use quoted_db_migration::{Migrator, MigratorTrait};
 use sheets4::Sheets;
@@ -24,18 +26,21 @@ async fn main() -> Result<(), SeedError> {
     let db = get_default_connection().await?;
     enable_query_logging();
 
-    Migrator::up(&db, None).await?;
-
-    let shows = parse_csv::shows()?;
-    seeder::seed_shows(&db, shows).await?;
+    let mut id_factory = IdFactory::new(db.clone());
 
     let client = client::get();
     let key = auth::get_key(&args.key_path).await?;
     let auth = auth::get_authenticator(key, &client).await?;
     let hub = Sheets::new(client, auth);
+
+    Migrator::up(&db, None).await?;
+
+    let shows = parse_csv::shows()?;
+    seeder::seed_shows(&db, &mut id_factory, shows).await?;
+
     let quotes = sheets::get_quotes(&hub, &args.sheet_id).await?;
 
-    seeder::seed_quotes(&db, quotes).await?;
+    seeder::seed_quotes(&db, &mut id_factory, quotes).await?;
 
     return Ok(());
 }

@@ -1,10 +1,10 @@
 use clap::Parser;
 
 #[derive(Parser)]
-#[command(name = "quoted")]
+#[command(name = "quoted-db-seeder")]
 #[command(version)]
 #[command(author = "devklick")]
-#[command(about = "Get quotes from your favorite TV shows")]
+#[command(about = "Seed the quoted database")]
 pub struct Args {
     #[arg(
         long,
@@ -15,8 +15,15 @@ pub struct Args {
 
     #[arg(
         long,
-        help = "The ID of the google sheet to read",
-        env = "QUOTED_DB_SEEDER__QUOTE_GOOGLE_SHEET_ID"
+        help = "The ID of the google sheet containing shows, seasons and episodes",
+        env = "QUOTED_DB_SEEDER__SHOWS_GOOGLE_SHEET_ID"
     )]
-    pub sheet_id: String,
+    pub shows_sheet_id: String,
+
+    #[arg(
+        long,
+        help = "The ID of the google sheet containing quotes",
+        env = "QUOTED_DB_SEEDER__QUOTES_GOOGLE_SHEET_ID"
+    )]
+    pub quotes_sheet_id: String,
 }

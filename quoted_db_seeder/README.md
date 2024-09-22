@@ -1,7 +1,8 @@
 # Quoted DB Seeder
 
 This app is responsible for seeding data into the Quoted DB. 
-It reads data from CSV* and adds it to the database if it does not already exist.
+It reads shows, seasons, episodes, and quotes from Google Sheets and 
+idempotently inserts them into the database.
 
 ## Usage
 
@@ -10,21 +11,35 @@ It reads data from CSV* and adds it to the database if it does not already exist
 A `.env` file should be present in the workspace root directory and should contain 
 a `DATABASE_URL` variable with the database connection string.
 
+The following optional environment variables can also be specified, or they can 
+be provided as CLI arguments:
+- `QUOTED_DB_SEEDER__GOOGLE_SERVICE_ACCOUNT_KEY_PATH`
+- `QUOTED_DB_SEEDER__SHOWS_GOOGLE_SHEET_ID`
+- `QUOTED_DB_SEEDER__QUOTES_GOOGLE_SHEET_ID`
+
+### Running the app
+
 From the root directory, run the app with cargo:
 
 ```
 cargo run --bin quoted_db_seeder
 ```
 
-## CSV Files
+## Google Sheets
 
-The CSV files can be found in the [data directory](./data/). At present, there
-are two types of CSV file:
+The data is initially input into google sheets by a user, and the seeder pulls the
+data from these sheets and inserts them into the database.
 
 ### Shows
 
 This file lists all shows, their seasons and episodes. It is required before
 any quotes can be added, as quotes need to be linked to a show, season and episode.
+
+The column structure of this spreadsheet is:
+- ShowName
+- SeasonNo
+- EpisodeNo
+- EpisodeName (optional)
 
 At the moment, this file is populated manually using data from online 
 (for example, from Wikipedia).
@@ -33,6 +48,13 @@ At the moment, this file is populated manually using data from online
 
 This file lists quotes to be added to the database. Each quote must specify 
 the name show, season and episode it belongs to, as well as the character being quoted.
+
+The column structure of this spreadsheet is:
+- ShowName
+- SeasonNo
+- EpisodeNo
+- CharacterName
+- QuoteText
 
 At the moment, this file is populated manually by watching the show and entering
 the details of the quote to be uploaded.
@@ -50,3 +72,9 @@ other than it potentially increasing the build times.
 
 There potential to avoid the Shows CSV file and instead write a scraper for Wikipedia. This would
 reduce size of the built application and reduce the manual overhead when adding data.
+
+## Wikipedia data used
+
+The following Wikipedia resources have been used.
+
+- [List of Family Guy episodes](https://en.wikipedia.org/wiki/List_of_Family_Guy_episodes)

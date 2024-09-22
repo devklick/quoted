@@ -1,6 +1,5 @@
 use quoted_db_entity::{episode, quote, season, show};
 use sea_orm::{DatabaseConnection, Set};
-use serde::Deserialize;
 
 // TODO: Refactor to insert many where possible.
 // Need to try and reduce the calls to the DB during the seeding process.
@@ -8,7 +7,7 @@ use serde::Deserialize;
 // it can be fetched once and stored in memory.
 
 use crate::{
-    helper::{create_character_for_show, idempotent_insert},
+    db_helper::{create_character_for_show, idempotent_insert},
     id::IdFactory,
     SeedError,
 };
@@ -29,8 +28,7 @@ pub struct Episode {
     pub name: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
-#[serde(rename_all = "PascalCase")]
+#[derive(Debug)]
 pub struct Quote {
     pub show_name: String,
     pub season_no: i32,

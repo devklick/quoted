@@ -1,10 +1,9 @@
 mod auth;
 mod cli;
 mod client;
+mod db_helper;
 mod error;
-mod helper;
 mod id;
-mod parse_csv;
 mod seeder;
 mod sheets;
 
@@ -35,10 +34,11 @@ async fn main() -> Result<(), SeedError> {
 
     Migrator::up(&db, None).await?;
 
-    let shows = parse_csv::shows()?;
+    let shows = sheets::get_shows(&hub, &args.shows_sheet_id).await?;
+
     seeder::seed_shows(&db, &mut id_factory, shows).await?;
 
-    let quotes = sheets::get_quotes(&hub, &args.sheet_id).await?;
+    let quotes = sheets::get_quotes(&hub, &args.quotes_sheet_id).await?;
 
     seeder::seed_quotes(&db, &mut id_factory, quotes).await?;
 

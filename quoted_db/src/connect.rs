@@ -74,7 +74,7 @@ pub async fn get_default_connection() -> Result<DatabaseConnection, DBError> {
 ///
 /// When one of the destructured env vars is of the wrong type.
 fn get_connection_string() -> Result<String, DBError> {
-    if let Some(url) = get_optional_env_var(ConnectionEnvVar::Url)? {
+    if let Some(url) = get_optional_env_var(&ConnectionEnvVar::Url)? {
         return Ok(url);
     }
 
@@ -116,14 +116,10 @@ fn get_required_env_var<T>(env_var: ConnectionEnvVar) -> Result<T, DBError>
 where
     T: FromStr,
 {
-    let raw = env::var(env_var.to_string())
-        .or(Err(DBError::ConnectionParamRequired(env_var.to_string())))?;
-
-    let parsed = raw
-        .parse::<T>()
-        .or(Err(DBError::ConnectionParamInvalid(env_var.to_string())))?;
-
-    return Ok(parsed);
+    match get_optional_env_var::<T>(&env_var)? {
+        None => Err(DBError::ConnectionParamRequired(env_var.to_string())),
+        Some(v) => Ok(v),
+    }
 }
 
 /// Gets the specified `env_var`, and if it's found, converts it to `T`.
@@ -131,7 +127,7 @@ where
 /// # Errors
 ///
 /// If the env var cannot be converted to `T`
-fn get_optional_env_var<T>(env_var: ConnectionEnvVar) -> Result<Option<T>, DBError>
+fn get_optional_env_var<T>(env_var: &ConnectionEnvVar) -> Result<Option<T>, DBError>
 where
     T: FromStr,
 {

@@ -11,6 +11,7 @@ use crate::{
 struct RawShow {
     show_name: String,
     season_no: i32,
+    season_name: Option<String>,
     episode_no: i32,
     episode_name: Option<String>,
 }
@@ -35,7 +36,7 @@ pub async fn get_shows(
 ) -> Result<Vec<Show>, SeedError> {
     let sheet = hub
         .spreadsheets()
-        .values_get(sheet_id, "A:D")
+        .values_get(sheet_id, "A:E")
         .doit()
         .await
         .or_else(|e| Err(SeedError::GoogleError(e)))?;
@@ -48,8 +49,13 @@ pub async fn get_shows(
 fn unflatten_shows(shows: Vec<RawShow>) -> Result<Vec<Show>, SeedError> {
     // key is episode_no, value is optional episode_name
     type EpisodeMap = HashMap<i32, Option<String>>;
+
+    struct SeasonMapValue {
+        season_name: Option<String>,
+        episode_map: EpisodeMap,
+    }
     // key is season_no, key is episode map
-    type SeasonMap = HashMap<i32, EpisodeMap>;
+    type SeasonMap = HashMap<i32, SeasonMapValue>;
     // key is show_name, value is season map
     type ShowMap = HashMap<String, SeasonMap>;
 
@@ -60,11 +66,16 @@ fn unflatten_shows(shows: Vec<RawShow>) -> Result<Vec<Show>, SeedError> {
             .entry(show.show_name.clone())
             .or_insert(HashMap::new());
 
-        let episodes_for_season = seasons_for_show
-            .entry(show.season_no.clone())
-            .or_insert(HashMap::new());
+        let episodes_for_season =
+            seasons_for_show
+                .entry(show.season_no.clone())
+                .or_insert(SeasonMapValue {
+                    episode_map: HashMap::new(),
+                    season_name: show.season_name,
+                });
 
         episodes_for_season
+            .episode_map
             .entry(show.episode_no)
             .or_insert(show.episode_name);
     }
@@ -75,9 +86,11 @@ fn unflatten_shows(shows: Vec<RawShow>) -> Result<Vec<Show>, SeedError> {
             name: show_name.clone(),
             seasons: seasons
                 .iter()
-                .map(|(season_no, episodes)| Season {
+                .map(|(season_no, season_map_val)| Season {
                     no: season_no.clone(),
-                    episodes: episodes
+                    name: season_map_val.season_name.clone(),
+                    episodes: season_map_val
+                        .episode_map
                         .iter()
                         .map(|(episode_no, episode_name)| Episode {
                             no: episode_no.clone(),
@@ -129,8 +142,13 @@ fn parse_show(row_values: &Vec<Value>) -> Result<RawShow, SeedError> {
             "Invalid SeasonNo, {e}"
         )))
     })?;
+    let season_name = parse_optional_row_value::<String>(&row_values, 2).or_else(|e| {
+        Err(SeedError::InvalidSheetData(format!(
+            "Invalid SeasonName, {e}"
+        )))
+    })?;
     // 2 = EpisodeNo
-    let episode_no = parse_row_value::<i32>(&row_values, 2).or_else(|e| {
+    let episode_no = parse_row_value::<i32>(&row_values, 3).or_else(|e| {
         Err(SeedError::InvalidSheetData(format!(
             "Invalid EpisodeNo, {e}"
         )))
@@ -145,6 +163,7 @@ fn parse_show(row_values: &Vec<Value>) -> Result<RawShow, SeedError> {
     Ok(RawShow {
         episode_no,
         season_no,
+        season_name,
         show_name,
         episode_name,
     })
@@ -243,7 +262,16 @@ where
         return Ok(None);
     }
 
-    Ok(Some(raw.as_str().unwrap().parse::<T>().or(Err(
-        format!("Cell {cell_index} value {raw} is invalid"),
-    ))?))
+    let str = match raw.as_str() {
+        None => return Ok(None),
+        Some(s) => s,
+    };
+
+    if str.is_empty() {
+        return Ok(None);
+    }
+
+    Ok(Some(str.parse::<T>().or(Err(format!(
+        "Cell {cell_index} value {raw} is invalid"
+    )))?))
 }

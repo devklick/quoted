@@ -1,10 +1,8 @@
 use quoted_db_entity::{episode, quote, season, show};
-use sea_orm::{DatabaseConnection, Set};
+use sea_orm::{ActiveValue::NotSet, DatabaseConnection, Set};
 
 // TODO: Refactor to insert many where possible.
 // Need to try and reduce the calls to the DB during the seeding process.
-// Perhaps rather than calling the DB to get an ID of a record we already know exists,
-// it can be fetched once and stored in memory.
 
 use crate::{
     db_helper::{create_character_for_show, idempotent_insert},
@@ -20,6 +18,7 @@ pub struct Show {
 #[derive(Debug)]
 pub struct Season {
     pub no: i32,
+    pub name: Option<String>,
     pub episodes: Vec<Episode>,
 }
 #[derive(Debug)]
@@ -87,11 +86,15 @@ async fn seed_season<'a>(
 ) -> Result<(), SeedError> {
     let season_id = id_factory.season.get_id(show_id, &season.no, true).await?;
 
-    let model = season::ActiveModel {
+    let mut model = season::ActiveModel {
         id: Set(season_id),
         show_id: Set(*show_id),
         season_no: Set(season.no),
+        name: NotSet,
     };
+    if season.name.is_some() {
+        model.name = Set(season.name)
+    }
     let conflict_cols = [season::Column::ShowId, season::Column::SeasonNo];
 
     idempotent_insert(db, model, conflict_cols).await?;

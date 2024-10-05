@@ -4,8 +4,8 @@ use quoted_api::{
     setup::setup,
 };
 use quoted_api_models::{
-    page::{GetShowsRequest, PagedData, PagedRequest},
-    show::Show,
+    page::{PagedData, PagedRequest},
+    show::{GetShowsRequest, GetShowsResponse, Show},
 };
 use quoted_db::get_default_connection;
 use quoted_db_entity as entity;
@@ -63,7 +63,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         if has_more {
             shows = shows.get(0..query_params.limit as usize).unwrap().to_vec();
         }
-        return SuccessResult::ok(PagedData::<Show>::new(
+        return SuccessResult::ok(GetShowsResponse::new(
             query_params.page,
             query_params.limit,
             shows,

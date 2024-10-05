@@ -50,12 +50,3 @@ where
         }
     }
 }
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct GetShowsRequest {}
-
-impl Default for GetShowsRequest {
-    fn default() -> Self {
-        Self {}
-    }
-}

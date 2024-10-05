@@ -1,10 +1,13 @@
 use reqwest::Client;
 
-use quoted_api_models::quote as api_models;
+use quoted_api_models::{
+    self as api_models,
+    show::{GetShowsRequest, GetShowsResponse},
+};
 
-use crate::models::RandomQuote;
+use crate::models::{RandomQuote, ShowsList};
 
-const BASE_URL: &str = "https://quoted-delta.vercel.app/api/quote";
+const BASE_URL: &str = "https://quoted-delta.vercel.app/api";
 
 pub async fn get_random(
     show: Option<String>,
@@ -13,7 +16,7 @@ pub async fn get_random(
     character: Option<String>,
 ) -> Result<RandomQuote, String> {
     log::trace!("Building request to fetch random quote");
-    let request = api_models::RandomQuoteRequest {
+    let request = api_models::quote::RandomQuoteRequest {
         show_name: show,
         season_no: season,
         episode_no: episode,
@@ -23,7 +26,7 @@ pub async fn get_random(
     let query_string = serde_urlencoded::to_string(request)
         .or_else(|e| Err(format!("Error building query\n{e}")))?;
 
-    let url = BASE_URL.to_owned() + "/random" + "?" + &query_string;
+    let url = BASE_URL.to_owned() + "/quote/random" + "?" + &query_string;
 
     log::trace!("Getting random quote from {url}");
 
@@ -36,7 +39,7 @@ pub async fn get_random(
         .or_else(|e| Err(format!("Error calling API\n{e}")))?;
 
     let quote = response
-        .json::<api_models::RandomQuoteResponse>()
+        .json::<api_models::quote::RandomQuoteResponse>()
         .await
         .or_else(|e| Err(format!("Error parsing response\n{e}")))?;
 
@@ -46,4 +49,35 @@ pub async fn get_random(
     );
 
     Ok(RandomQuote(quote))
+}
+
+pub async fn list_shows(page_no: u64) -> Result<ShowsList, String> {
+    let request = GetShowsRequest {
+        page: page_no,
+        limit: 1,
+        ..Default::default()
+    };
+
+    let query_string = serde_urlencoded::to_string(request)
+        .or_else(|e| Err(format!("Error building query\n{e}")))?;
+
+    let url = BASE_URL.to_owned() + "/shows" + "?" + &query_string;
+
+    log::trace!("Getting shows from {url}");
+
+    let client = Client::new();
+    let response = client
+        .get(url)
+        .send()
+        .await
+        .or_else(|e| Err(format!("Error calling API\n{e}")))?;
+
+    let shows = response
+        .json::<GetShowsResponse>()
+        .await
+        .or_else(|e| Err(format!("Error parsing response\n{e}")))?;
+
+    log::trace!("Found shows {}", serde_json::to_string(&shows).unwrap());
+
+    Ok(ShowsList(shows))
 }

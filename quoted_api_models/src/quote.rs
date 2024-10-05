@@ -1,6 +1,14 @@
 use sea_orm::FromQueryResult;
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct RandomQuoteRequest {
+    pub show_name: Option<String>,
+    pub season_no: Option<i32>,
+    pub episode_no: Option<i32>,
+    pub character_name: Option<String>,
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone, FromQueryResult)]
 pub struct RandomQuoteResponse {
     pub show_name: String,
@@ -9,14 +17,6 @@ pub struct RandomQuoteResponse {
     pub episode_no: i32,
     pub episode_name: Option<String>,
     pub quote_text: String,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct RandomQuoteRequest {
-    pub show_name: Option<String>,
-    pub season_no: Option<i32>,
-    pub episode_no: Option<i32>,
-    pub character_name: Option<String>,
 }
 
 impl Default for RandomQuoteRequest {

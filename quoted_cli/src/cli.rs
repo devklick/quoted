@@ -1,11 +1,14 @@
 use clap::{Parser, Subcommand};
 
-use crate::commands::random::RandomQuoteCommand;
+use crate::commands::{quote::QuoteArgs, show::ShowArgs};
 
 #[derive(Subcommand)]
 pub enum Commands {
-    #[command(about = "Fetches a random quote")]
-    Random(RandomQuoteCommand),
+    #[command(about = "Interact with quotes")]
+    Quote(QuoteArgs),
+
+    #[command(about = "Interact with shows")]
+    Show(ShowArgs),
 }
 
 #[derive(Parser)]

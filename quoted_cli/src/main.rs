@@ -7,7 +7,7 @@ use std::process::ExitCode;
 
 use clap::Parser;
 use cli::Commands;
-use commands::common::RunCommand;
+use commands::{common::RunCommand, quote::QuoteCommands, show::ShowCommands};
 use fern::colors::{Color, ColoredLevelConfig};
 
 #[tokio::main]
@@ -20,7 +20,12 @@ async fn main() -> ExitCode {
     }
 
     let res = match args.command {
-        Commands::Random(random) => random.run().await,
+        Commands::Quote(quote) => match quote.command {
+            QuoteCommands::Random(random_quote) => random_quote.run().await,
+        },
+        Commands::Show(show) => match show.command {
+            ShowCommands::List(list_shows) => list_shows.run().await,
+        },
     };
 
     return match res {

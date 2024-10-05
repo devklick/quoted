@@ -1,2 +1,3 @@
 pub mod common;
-pub mod random;
+pub mod quote;
+pub mod show;

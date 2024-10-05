@@ -1,15 +1,27 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 use crate::api;
 
 use super::common::RunCommand;
+
+#[derive(Parser)]
+pub struct QuoteArgs {
+    #[command(subcommand)]
+    pub command: QuoteCommands,
+}
+
+#[derive(Subcommand)]
+pub enum QuoteCommands {
+    #[command(about = "Get a random quote")]
+    Random(GetRandomQuoteCommand),
+}
 
 // character, optional, allowed at any time
 // show, optional, allowed at any time
 // season, optional, allowed only if show specified
 // episode, optional, allowed only if season specified
 #[derive(Parser)]
-pub struct RandomQuoteCommand {
+pub struct GetRandomQuoteCommand {
     #[arg(long)]
     show: Option<String>,
 
@@ -23,7 +35,7 @@ pub struct RandomQuoteCommand {
     character: Option<String>,
 }
 
-impl RunCommand for RandomQuoteCommand {
+impl RunCommand for GetRandomQuoteCommand {
     async fn run(self) -> Result<(), String> {
         let quote = api::get_random(self.show, self.season, self.episode, self.character).await?;
         log::info!("{}", quote);

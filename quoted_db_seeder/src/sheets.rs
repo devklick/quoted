@@ -236,7 +236,6 @@ fn parse_show(row_values: &Vec<Value>) -> Result<RawShow, SeedError> {
 }
 
 fn parse_quotes(rows: &Option<Vec<Vec<Value>>>) -> Result<Vec<RawQuote>, SeedError> {
-    println!("{:#?}", rows);
     let mut row_no = 0;
     let mut quotes = Vec::<RawQuote>::new();
     if let Some(rows) = rows {

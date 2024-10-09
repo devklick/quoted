@@ -1,4 +1,4 @@
-use quoted_db_entity::{episode, quote, season, show};
+use quoted_db_entity::{episode, quote, quote_part, season, show};
 use sea_orm::{ActiveValue::NotSet, DatabaseConnection, Set};
 
 // TODO: Refactor to insert many where possible.
@@ -32,8 +32,15 @@ pub struct Quote {
     pub show_name: String,
     pub season_no: i32,
     pub episode_no: i32,
+    pub source_id: i32,
+    pub parts: Vec<QuotePart>,
+}
+
+#[derive(Debug)]
+pub struct QuotePart {
     pub character_name: String,
     pub quote_text: String,
+    pub order: i32,
 }
 
 pub async fn seed_shows<'a>(
@@ -163,6 +170,7 @@ async fn seed_quote<'a>(
     id_factory: &mut IdFactory<'a>,
     quote: Quote,
 ) -> Result<(), SeedError> {
+    let quote_id = id_factory.quote.get_id(&quote.source_id).await?;
     let show_id = id_factory.show.get_id(&quote.show_name, false).await?;
     let season_id = id_factory
         .season
@@ -172,31 +180,43 @@ async fn seed_quote<'a>(
         .episode
         .get_id(&show_id, &season_id, &quote.episode_no, false)
         .await?;
-    let character_id = id_factory
-        .character
-        .get_id(&show_id, &quote.character_name)
-        .await?;
-
-    create_character_for_show(db, id_factory, &show_id, &quote.character_name).await?;
 
     let model = quote::ActiveModel {
-        character_id: Set(character_id),
         episode_id: Set(episode_id),
         season_id: Set(season_id),
         show_id: Set(show_id),
-        value: Set(quote.quote_text),
-        ..Default::default()
+        source_id: Set(quote.source_id),
+        id: Set(quote_id),
     };
 
-    let conflict_cols = [
-        quote::Column::CharacterId,
-        quote::Column::EpisodeId,
-        quote::Column::SeasonId,
-        quote::Column::ShowId,
-        quote::Column::Value,
-    ];
+    let conflict_cols = [quote::Column::SourceId];
 
     idempotent_insert(db, model, conflict_cols).await?;
+
+    for part in quote.parts {
+        let character_id = id_factory
+            .character
+            .get_id(&show_id, &part.character_name)
+            .await?;
+
+        create_character_for_show(db, id_factory, &show_id, &part.character_name).await?;
+
+        let model = quote_part::ActiveModel {
+            character_id: Set(character_id),
+            order_no: Set(part.order),
+            value: Set(part.quote_text),
+            quote_id: Set(quote_id),
+            ..Default::default()
+        };
+
+        let conflict_cols = [
+            quote_part::Column::CharacterId,
+            quote_part::Column::QuoteId,
+            quote_part::Column::OrderNo,
+        ];
+
+        idempotent_insert(db, model, conflict_cols).await?;
+    }
 
     Ok(())
 }

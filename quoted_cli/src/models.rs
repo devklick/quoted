@@ -12,10 +12,20 @@ impl Deref for RandomQuote {
 
 impl Display for RandomQuote {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut parts = self.parts.clone();
+        parts.sort_by_key(|p| p.order);
+        
+        let quote_parts = self
+            .parts
+            .iter()
+            .map(|p| p.character_name.clone() + ": " + p.quote_text.as_str())
+            .collect::<Vec<String>>()
+            .join("\n");
+
         write!(
             f,
-            "{}\n{}\n{}, season {}, episode {}",
-            self.quote_text, self.character_name, self.show_name, self.season_no, self.episode_no,
+            "{}\n{}\nseason {}, episode {}",
+            quote_parts, self.show_name, self.season_no, self.episode_no,
         )
     }
 }

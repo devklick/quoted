@@ -4,11 +4,8 @@ pub mod prelude;
 
 pub mod character;
 pub mod character_show;
-pub mod customers;
 pub mod episode;
-pub mod invoices;
 pub mod quote;
-pub mod revenue;
+pub mod quote_part;
 pub mod season;
 pub mod show;
-pub mod users;

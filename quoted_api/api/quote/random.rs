@@ -1,15 +1,16 @@
 use http::Method;
 use quoted_api::{
     api_response::{ErrorResult, SuccessResult, VercelResponse},
+    models::quote_models::{RandomQuoteDBResult, RandomQuotePartDBResult},
     setup::setup,
 };
-use quoted_api_models::quote::{RandomQuoteRequest, RandomQuoteResponse};
+use quoted_api_models::quote::RandomQuoteRequest;
 use quoted_db::get_default_connection;
-use quoted_db_entity as entity;
+use quoted_db_entity::{self as entity};
 use sea_orm::{
     entity::*,
     sea_query::{Func, SimpleExpr},
-    EntityTrait, QueryFilter, QuerySelect, QueryTrait,
+    DatabaseBackend, EntityTrait, QueryFilter, QuerySelect, QueryTrait, Statement,
 };
 use sea_orm::{ConnectionTrait, FromQueryResult};
 use vercel_runtime::{run, Body, Error, Request, Response};
@@ -32,6 +33,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     println!("Getting DB Connection");
     let db = get_default_connection().await?;
+    let db_backend = db.get_database_backend();
 
     println!("Parsing query params");
     let query_params = match req.uri().query() {
@@ -44,13 +46,52 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     println!("{:#?}", query_params);
 
-    println!("Building query");
+    println!("Building quote query");
+    let query = build_quote_query(query_params, db_backend);
+
+    println!("Executing quote query");
+    let quote = match RandomQuoteDBResult::find_by_statement(query).one(&db).await {
+        Err(_) => {
+            println!("DB Returned error when looking for quote");
+            return ErrorResult::server_error("Error finding random quote").vercel();
+        }
+        Ok(r) => {
+            if r.is_none() {
+                println!("No quotes match found");
+                return ErrorResult::bad_request("Quote not found").vercel();
+            }
+            r.unwrap()
+        }
+    };
+
+    println!("Building quote parts query");
+    let query = build_quote_part_query(quote.quote_id, db_backend);
+
+    println!("Executing quote parts query");
+    let quote_parts = match RandomQuotePartDBResult::find_by_statement(query)
+        .all(&db)
+        .await
+    {
+        Err(_) => {
+            println!("DB Returned error when looking for quote parts");
+            return ErrorResult::server_error("Error finding random quote").vercel();
+        }
+        Ok(r) => r,
+    };
+    let mut response = quote.to_api_response();
+    response.parts = quote_parts.iter().map(|qp| qp.to_api_response()).collect();
+
+    SuccessResult::ok(response).vercel()
+}
+
+fn build_quote_query(query_params: RandomQuoteRequest, db_backend: DatabaseBackend) -> Statement {
+    // Start by wiring up the required joins
     let mut query = entity::quote::Entity::find()
         .inner_join(entity::episode::Entity)
         .inner_join(entity::season::Entity)
-        .inner_join(entity::show::Entity)
-        .inner_join(entity::character::Entity);
+        .inner_join(entity::show::Entity);
 
+    // Conditionally apply any filters based on query params
     if let Some(show_name) = &query_params.show_name {
         query = query.filter(entity::show::Column::Name.eq(show_name));
     }
@@ -64,14 +105,15 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         query = query.filter(entity::character::Column::Name.eq(character_name));
     }
 
+    // Add the columns to be selected
     let query = query
         .select_only()
+        .column_as(entity::quote::Column::Id, "quote_id")
         .column_as(entity::show::Column::Name, "show_name")
         .column_as(entity::character::Column::Name, "character_name")
         .column(entity::season::Column::SeasonNo)
         .column(entity::episode::Column::EpisodeNo)
         .column_as(entity::episode::Column::Name, "episode_name")
-        .column_as(entity::quote::Column::Value, "quote_text")
         .as_query()
         .to_owned()
         .order_by_expr(
@@ -80,19 +122,21 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         )
         .to_owned();
 
-    let stmt = db.get_database_backend().build(&query);
+    // build the query
+    db_backend.build(&query)
+}
 
-    println!("Executing query");
-    let quote = RandomQuoteResponse::find_by_statement(stmt).one(&db).await;
+fn build_quote_part_query(quote_id: i32, db_backend: DatabaseBackend) -> Statement {
+    let query = entity::quote_part::Entity::find()
+        .inner_join(entity::character::Entity)
+        .select_only()
+        .column(entity::quote_part::Column::QuoteId)
+        .column_as(entity::quote_part::Column::OrderNo, "order")
+        .column_as(entity::quote_part::Column::Value, "quote_text")
+        .column_as(entity::character::Column::Name, "character_name")
+        .filter(entity::quote_part::Column::QuoteId.eq(quote_id))
+        .as_query()
+        .to_owned();
 
-    if let Ok(quote) = quote {
-        if let Some(quote) = quote {
-            println!("Returning result");
-            return SuccessResult::ok(quote).vercel();
-        }
-        println!("No match found");
-        return ErrorResult::bad_request("Quote not found").vercel();
-    }
-    println!("DB Returned error");
-    return ErrorResult::server_error("Error finding random quote").vercel();
+    db_backend.build(&query)
 }

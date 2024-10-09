@@ -2,11 +2,8 @@
 
 pub use super::character::Entity as Character;
 pub use super::character_show::Entity as CharacterShow;
-pub use super::customers::Entity as Customers;
 pub use super::episode::Entity as Episode;
-pub use super::invoices::Entity as Invoices;
 pub use super::quote::Entity as Quote;
-pub use super::revenue::Entity as Revenue;
+pub use super::quote_part::Entity as QuotePart;
 pub use super::season::Entity as Season;
 pub use super::show::Entity as Show;
-pub use super::users::Entity as Users;

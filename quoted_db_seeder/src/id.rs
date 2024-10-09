@@ -5,7 +5,7 @@ use quoted_db_migration::Func;
 use sea_orm::{entity::*, query::*, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};
 
 use quoted_db::error::DBError;
-use quoted_db_entity::{character, character_show, episode, season, show};
+use quoted_db_entity::{character, character_show, episode, quote, season, show};
 
 #[derive(PartialEq, Eq, Hash)]
 pub struct CharacterIdKey {
@@ -31,6 +31,11 @@ pub struct EpisodeIdKey {
     episode_no: i32,
 }
 
+#[derive(PartialEq, Eq, Hash)]
+pub struct QuoteIdKey {
+    source_id: i32,
+}
+
 pub struct ShowIdFactory<'a> {
     cache: HashMap<ShowIdKey, i32>,
     db: &'a DatabaseConnection,
@@ -47,10 +52,14 @@ pub struct CharacterIdFactory<'a> {
     cache: HashMap<CharacterIdKey, i32>,
     db: &'a DatabaseConnection,
 }
+pub struct QuoteIdFactory<'a> {
+    cache: HashMap<QuoteIdKey, i32>,
+    db: &'a DatabaseConnection,
+}
 
 impl<'a> ShowIdFactory<'a> {
     pub fn new(db: &'a DatabaseConnection) -> Self {
-        ShowIdFactory {
+        Self {
             db,
             cache: HashMap::new(),
         }
@@ -114,7 +123,7 @@ impl<'a> ShowIdFactory<'a> {
 
 impl<'a> SeasonIdFactory<'a> {
     pub fn new(db: &'a DatabaseConnection) -> Self {
-        SeasonIdFactory {
+        Self {
             db,
             cache: HashMap::new(),
         }
@@ -188,7 +197,7 @@ impl<'a> SeasonIdFactory<'a> {
 
 impl<'a> EpisodeIdFactory<'a> {
     pub fn new(db: &'a DatabaseConnection) -> Self {
-        EpisodeIdFactory {
+        Self {
             db,
             cache: HashMap::new(),
         }
@@ -266,7 +275,7 @@ impl<'a> EpisodeIdFactory<'a> {
 
 impl<'a> CharacterIdFactory<'a> {
     pub fn new(db: &'a DatabaseConnection) -> Self {
-        CharacterIdFactory {
+        Self {
             db,
             cache: HashMap::new(),
         }
@@ -334,11 +343,72 @@ impl<'a> CharacterIdFactory<'a> {
     }
 }
 
+impl<'a> QuoteIdFactory<'a> {
+    pub fn new(db: &'a DatabaseConnection) -> QuoteIdFactory<'a> {
+        Self {
+            db,
+            cache: HashMap::new(),
+        }
+    }
+    pub async fn get_id(&mut self, source_id: &i32) -> Result<i32, DBError> {
+        println!("get_id_for_quote (source_id={source_id})");
+
+        let key = QuoteIdKey {
+            source_id: *source_id,
+        };
+
+        if self.cache.contains_key(&key) {
+            let id = self.cache[&key];
+            println!(
+                "get_id_for_quote - found existing id {id} in memory for source_id={source_id}"
+            );
+            return Ok(id);
+        }
+
+        let id = quote::Entity::find()
+            .select_only()
+            .column(quote::Column::Id)
+            .filter(quote::Column::SourceId.eq(*source_id))
+            .into_tuple::<i32>()
+            .one(self.db)
+            .await?;
+
+        if let Some(id) = id {
+            println!("get_id_for_quote - found existing id {id} for source_id={source_id}");
+            self.cache.insert(key, id);
+            return Ok(id);
+        }
+        let max = quote::Entity::find()
+            .select_only()
+            .expr(
+                Func::coalesce([
+                    Expr::col(quote::Column::Id).max().into(),
+                    Expr::val(0).into(),
+                ])
+                .to_owned(),
+            )
+            .into_tuple::<i32>()
+            .one(self.db)
+            .await?;
+
+        let id = match max {
+            Some(m) => m + 1,
+            None => 1,
+        };
+
+        println!("get_id_for_quote - using next id {id} source_id={source_id}");
+        self.cache.insert(key, id);
+
+        return Ok(id);
+    }
+}
+
 pub struct IdFactory<'a> {
     pub show: ShowIdFactory<'a>,
     pub season: SeasonIdFactory<'a>,
     pub episode: EpisodeIdFactory<'a>,
     pub character: CharacterIdFactory<'a>,
+    pub quote: QuoteIdFactory<'a>,
 }
 
 impl<'a> IdFactory<'a> {
@@ -348,6 +418,7 @@ impl<'a> IdFactory<'a> {
             season: SeasonIdFactory::new(db),
             episode: EpisodeIdFactory::new(db),
             character: CharacterIdFactory::new(db),
+            quote: QuoteIdFactory::new(db),
         }
     }
 }

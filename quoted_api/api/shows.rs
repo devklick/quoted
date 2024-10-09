@@ -4,7 +4,7 @@ use quoted_api::{
     setup::setup,
 };
 use quoted_api_models::{
-    page::{PagedData, PagedRequest},
+    page::PagedRequest,
     show::{GetShowsRequest, GetShowsResponse, Show},
 };
 use quoted_db::get_default_connection;

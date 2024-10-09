@@ -7,23 +7,15 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub value: String,
-    pub character_id: i32,
     pub show_id: i32,
     pub season_id: i32,
     pub episode_id: i32,
+    #[sea_orm(unique)]
+    pub source_id: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::character::Entity",
-        from = "Column::CharacterId",
-        to = "super::character::Column::Id",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
-    Character,
     #[sea_orm(
         belongs_to = "super::episode::Entity",
         from = "Column::EpisodeId",
@@ -32,6 +24,8 @@ pub enum Relation {
         on_delete = "NoAction"
     )]
     Episode,
+    #[sea_orm(has_many = "super::quote_part::Entity")]
+    QuotePart,
     #[sea_orm(
         belongs_to = "super::season::Entity",
         from = "Column::SeasonId",
@@ -50,15 +44,15 @@ pub enum Relation {
     Show,
 }
 
-impl Related<super::character::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Character.def()
-    }
-}
-
 impl Related<super::episode::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Episode.def()
+    }
+}
+
+impl Related<super::quote_part::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::QuotePart.def()
     }
 }
 

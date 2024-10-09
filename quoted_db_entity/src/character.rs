@@ -15,8 +15,8 @@ pub struct Model {
 pub enum Relation {
     #[sea_orm(has_many = "super::character_show::Entity")]
     CharacterShow,
-    #[sea_orm(has_many = "super::quote::Entity")]
-    Quote,
+    #[sea_orm(has_many = "super::quote_part::Entity")]
+    QuotePart,
     #[sea_orm(
         belongs_to = "super::show::Entity",
         from = "Column::ShowId",
@@ -33,9 +33,9 @@ impl Related<super::character_show::Entity> for Entity {
     }
 }
 
-impl Related<super::quote::Entity> for Entity {
+impl Related<super::quote_part::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Quote.def()
+        Relation::QuotePart.def()
     }
 }
 

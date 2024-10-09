@@ -52,8 +52,11 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     println!("Executing quote query");
     let quote = match RandomQuoteDBResult::find_by_statement(query).one(&db).await {
-        Err(_) => {
-            println!("DB Returned error when looking for quote");
+        Err(e) => {
+            println!(
+                "DB Returned error when looking for quote\n{}",
+                e.sql_err().unwrap().to_string()
+            );
             return ErrorResult::server_error("Error finding random quote").vercel();
         }
         Ok(r) => {
@@ -73,8 +76,11 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         .all(&db)
         .await
     {
-        Err(_) => {
-            println!("DB Returned error when looking for quote parts");
+        Err(e) => {
+            println!(
+                "DB Returned error when looking for quote parts\n{}",
+                e.sql_err().unwrap().to_string()
+            );
             return ErrorResult::server_error("Error finding random quote").vercel();
         }
         Ok(r) => r,
@@ -90,7 +96,12 @@ fn build_quote_query(query_params: RandomQuoteRequest, db_backend: DatabaseBacke
     let mut query = entity::quote::Entity::find()
         .inner_join(entity::episode::Entity)
         .inner_join(entity::season::Entity)
-        .inner_join(entity::show::Entity);
+        .inner_join(entity::show::Entity)
+        .inner_join(entity::quote_part::Entity)
+        .join(
+            sea_orm::JoinType::InnerJoin,
+            entity::character::Relation::QuotePart.def().rev(),
+        );
 
     // Conditionally apply any filters based on query params
     if let Some(show_name) = &query_params.show_name {

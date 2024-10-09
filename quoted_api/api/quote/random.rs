@@ -5,7 +5,7 @@ use quoted_api::{
     setup::setup,
 };
 use quoted_api_models::quote::RandomQuoteRequest;
-use quoted_db::get_default_connection;
+use quoted_db::{enable_query_logging, get_default_connection};
 use quoted_db_entity::{self as entity};
 use sea_orm::{
     entity::*,
@@ -34,6 +34,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     println!("Getting DB Connection");
     let db = get_default_connection().await?;
     let db_backend = db.get_database_backend();
+    enable_query_logging();
 
     println!("Parsing query params");
     let query_params = match req.uri().query() {
@@ -112,6 +113,7 @@ fn build_quote_query(query_params: RandomQuoteRequest, db_backend: DatabaseBacke
         .column_as(entity::show::Column::Name, "show_name")
         .column_as(entity::character::Column::Name, "character_name")
         .column(entity::season::Column::SeasonNo)
+        .column_as(entity::season::Column::Name, "season_name")
         .column(entity::episode::Column::EpisodeNo)
         .column_as(entity::episode::Column::Name, "episode_name")
         .as_query()

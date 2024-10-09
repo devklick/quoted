@@ -100,7 +100,7 @@ fn build_quote_query(query_params: RandomQuoteRequest, db_backend: DatabaseBacke
         .inner_join(entity::quote_part::Entity)
         .join(
             sea_orm::JoinType::InnerJoin,
-            entity::quote_part::Relation::Character.def().rev(),
+            entity::character::Relation::QuotePart.def().rev(),
         );
 
     // Conditionally apply any filters based on query params

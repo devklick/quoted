@@ -19,6 +19,7 @@ pub struct RandomQuotePart {
 pub struct RandomQuoteResponse {
     pub show_name: String,
     pub season_no: i32,
+    pub season_name: Option<String>,
     pub episode_no: i32,
     pub episode_name: Option<String>,
     pub parts: Vec<RandomQuotePart>,

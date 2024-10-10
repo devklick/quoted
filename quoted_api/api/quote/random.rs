@@ -34,7 +34,6 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     println!("Getting DB Connection");
     let db = get_default_connection().await?;
     let db_backend = db.get_database_backend();
-    enable_query_logging();
 
     println!("Parsing query params");
     let query_params = match req.uri().query() {

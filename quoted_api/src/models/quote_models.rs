@@ -7,6 +7,7 @@ pub struct RandomQuoteDBResult {
     pub quote_id: i32,
     pub show_name: String,
     pub season_no: i32,
+    pub season_name: Option<String>,
     pub episode_no: i32,
     pub episode_name: Option<String>,
 }
@@ -18,6 +19,7 @@ impl RandomQuoteDBResult {
             episode_name: self.episode_name.clone(),
             episode_no: self.episode_no,
             season_no: self.season_no,
+            season_name: self.season_name.clone(),
             parts: vec![],
         }
     }

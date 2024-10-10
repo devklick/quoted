@@ -13,8 +13,31 @@ impl Deref for RandomQuote {
 impl Display for RandomQuote {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut parts = self.parts.clone();
+        let mut season = format!("season {}", self.season_no);
+        if let Some(season_name) = &self.season_name {
+            season += format!(" - {}", season_name).as_str();
+        }
+        let mut episode = format!("episode {}", self.episode_no);
+        if let Some(episode_name) = &self.episode_name {
+            episode += format!("- {}", episode_name).as_str();
+        }
+        if parts.len() == 1 {
+            // e.g
+            // It's OK to lie to women. They're not people like us
+            //
+            // Peter Griffin
+            // Family Guy
+            // Season 1
+            // Episode 1 - Death Has a Shadow
+            return write!(
+                f,
+                "{}\n\n{}\n{}\nSeason {}\nEpisode {}",
+                parts[0].quote_text, parts[0].character_name, self.show_name, season, episode
+            );
+        }
+
         parts.sort_by_key(|p| p.order);
-        
+
         let quote_parts = self
             .parts
             .iter()
@@ -22,10 +45,17 @@ impl Display for RandomQuote {
             .collect::<Vec<String>>()
             .join("\n");
 
+        // e.g.
+        // Philip J. Fry: Does anybody else feel aroused and jealous and worried?
+        // Bender Rodriguez: I have't felt much of anything since my guinea pig died.
+        //
+        // Futurama
+        // Season 6
+        // Episode 2 - In-A-Gadda-Da-Leela
         write!(
             f,
-            "{}\n{}\nseason {}, episode {}",
-            quote_parts, self.show_name, self.season_no, self.episode_no,
+            "{}\n\n{}\nSeason {}\nEpisode {}",
+            quote_parts, self.show_name, season, episode,
         )
     }
 }

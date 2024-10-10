@@ -19,7 +19,7 @@ impl Display for RandomQuote {
         }
         let mut episode = format!("episode {}", self.episode_no);
         if let Some(episode_name) = &self.episode_name {
-            episode += format!("- {}", episode_name).as_str();
+            episode += format!(" - {}", episode_name).as_str();
         }
         if parts.len() == 1 {
             // e.g

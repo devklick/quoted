@@ -60,10 +60,10 @@ impl Display for RandomQuote {
     }
 }
 
-pub struct ShowsList(pub quoted_api_models::page::PagedData<quoted_api_models::show::Show>);
+pub struct ShowsList(pub quoted_api_models::page::PagedResponse<quoted_api_models::show::GetShowsResponseItem>);
 
 impl Deref for ShowsList {
-    type Target = quoted_api_models::page::PagedData<quoted_api_models::show::Show>;
+    type Target = quoted_api_models::page::PagedResponse<quoted_api_models::show::GetShowsResponseItem>;
 
     fn deref(&self) -> &Self::Target {
         &self.0

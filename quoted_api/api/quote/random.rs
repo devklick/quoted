@@ -4,7 +4,7 @@ use quoted_api::{
     models::quote_models::{RandomQuoteDBResult, RandomQuotePartDBResult},
     setup::setup,
 };
-use quoted_api_models::quote::RandomQuoteRequest;
+use quoted_api_models::quote::RandomQuoteRequestParams;
 use quoted_db::get_default_connection;
 use quoted_db_entity::{self as entity};
 use sea_orm::{
@@ -37,8 +37,8 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     println!("Parsing query params");
     let query_params = match req.uri().query() {
-        None => RandomQuoteRequest::default(),
-        Some(query) => match serde_urlencoded::from_str::<RandomQuoteRequest>(query) {
+        None => RandomQuoteRequestParams::default(),
+        Some(query) => match serde_urlencoded::from_str::<RandomQuoteRequestParams>(query) {
             Ok(query) => query,
             Err(_) => return ErrorResult::bad_request("Invalid query parameters").vercel(),
         },
@@ -90,7 +90,10 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     SuccessResult::ok(response).vercel()
 }
 
-fn build_quote_query(query_params: RandomQuoteRequest, db_backend: DatabaseBackend) -> Statement {
+fn build_quote_query(
+    query_params: RandomQuoteRequestParams,
+    db_backend: DatabaseBackend,
+) -> Statement {
     // Start by wiring up the required joins
     let mut query = entity::quote::Entity::find()
         .inner_join(entity::episode::Entity)

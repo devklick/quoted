@@ -7,3 +7,4 @@ publish = true
 [dependencies]
 serde = { version = "1.0.210", features = ["derive"] }
 sea-orm = { version = "1.0.0-rc.5", features = ["macros", "debug-print"] }
+serde_with = "3.11.0"

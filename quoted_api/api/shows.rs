@@ -3,10 +3,7 @@ use quoted_api::{
     api_response::{ErrorResult, SuccessResult, VercelResponse},
     setup::setup,
 };
-use quoted_api_models::{
-    page::PagedRequest,
-    show::{GetShowsRequest, GetShowsResponse, Show},
-};
+use quoted_api_models::show::{GetShowsRequest, GetShowsResponse, GetShowsResponseItem};
 use quoted_db::get_default_connection;
 use quoted_db_entity as entity;
 use sea_orm::{ConnectionTrait, FromQueryResult};
@@ -32,10 +29,10 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     println!("Getting DB Connection");
     let db = get_default_connection().await?;
 
-    println!("Parsing query params");
+    println!("Parsing query params {:#?}", req.uri().query());
     let query_params = match req.uri().query() {
-        None => PagedRequest::<GetShowsRequest>::default(),
-        Some(query) => match serde_urlencoded::from_str::<PagedRequest<GetShowsRequest>>(query) {
+        None => GetShowsRequest::default(),
+        Some(query) => match serde_urlencoded::from_str::<GetShowsRequest>(query) {
             Ok(query) => query,
             Err(_) => return ErrorResult::bad_request("Invalid query parameters").vercel(),
         },
@@ -55,7 +52,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     let stmt = db.get_database_backend().build(&query);
 
-    let shows = Show::find_by_statement(stmt).all(&db).await;
+    let shows = GetShowsResponseItem::find_by_statement(stmt).all(&db).await;
 
     if let Ok(mut shows) = shows {
         println!("Returning result");

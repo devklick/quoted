@@ -16,7 +16,7 @@ pub async fn get_random(
     character: Option<String>,
 ) -> Result<RandomQuote, String> {
     log::trace!("Building request to fetch random quote");
-    let request = api_models::quote::RandomQuoteRequest {
+    let request = api_models::quote::RandomQuoteRequestParams {
         show_name: show,
         season_no: season,
         episode_no: episode,

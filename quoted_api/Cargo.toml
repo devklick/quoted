@@ -15,6 +15,14 @@ path = "api/quote/random.rs"
 name = "shows"
 path = "api/shows.rs"
 
+[[bin]]
+name = "show-seasons"
+path = "api/show/[show]/seasons.rs"
+
+[[bin]]
+name = "show-season-episodes"
+path = "api/show/[show]/season/[season]/episodes.rs"
+
 [dependencies]
 dotenvy = "0.15.7"
 quoted_db = { path = "../quoted_db" }

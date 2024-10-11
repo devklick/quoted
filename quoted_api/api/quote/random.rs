@@ -5,7 +5,7 @@ use quoted_api::{
     setup::setup,
 };
 use quoted_api_models::quote::RandomQuoteRequest;
-use quoted_db::{enable_query_logging, get_default_connection};
+use quoted_db::get_default_connection;
 use quoted_db_entity::{self as entity};
 use sea_orm::{
     entity::*,

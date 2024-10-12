@@ -23,6 +23,10 @@ path = "api/show/[show]/seasons.rs"
 name = "show-season-episodes"
 path = "api/show/[show]/season/[season]/episodes.rs"
 
+[[bin]]
+name = "show-season-episode-quotes"
+path = "api/show/[show]/season/[season]/episode/[episode]/quotes.rs"
+
 [dependencies]
 dotenvy = "0.15.7"
 quoted_db = { path = "../quoted_db" }

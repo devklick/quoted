@@ -6,12 +6,12 @@ use crate::page::{PagedRequest, PagedResponse};
 ///
 /// Defines the request to fetch seasons for a given show
 ///
-pub type GetShowSeasonsRequest = PagedRequest<GetShowSeasonsRequestParams>;
+pub type GetSeasonsInShowRequest = PagedRequest<GetSeasonsInShowRequestParams>;
 
 ///
 /// Defines the response returned when fetching seasons for a given show
 ///
-pub type GetShowSeasonsResponse = PagedResponse<GetShowSeasonResponseItem>;
+pub type GetSeasonsInShowResponse = PagedResponse<GetSeasonsInShowResponseItem>;
 
 ///
 /// The parameters supported when fetching seasons for a given show.
@@ -19,7 +19,7 @@ pub type GetShowSeasonsResponse = PagedResponse<GetShowSeasonResponseItem>;
 /// `GetShowSeasonsRequestParams` are also supported.
 ///
 #[derive(Serialize, Deserialize, Debug)]
-pub struct GetShowSeasonsRequestParams {
+pub struct GetSeasonsInShowRequestParams {
     ///
     /// The name of the show to fetch seasons for
     ///
@@ -31,7 +31,7 @@ pub struct GetShowSeasonsRequestParams {
 /// for a given show.
 ///
 #[derive(Serialize, Deserialize, FromQueryResult, Debug, Clone)]
-pub struct GetShowSeasonResponseItem {
+pub struct GetSeasonsInShowResponseItem {
     ///
     /// The season number
     ///
@@ -42,7 +42,7 @@ pub struct GetShowSeasonResponseItem {
     pub season_name: Option<String>,
 }
 
-impl Default for GetShowSeasonsRequestParams {
+impl Default for GetSeasonsInShowRequestParams {
     fn default() -> Self {
         Self {
             show: Default::default(),

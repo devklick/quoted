@@ -1,10 +1,10 @@
 use http::Method;
 use quoted_api::{
     api_response::{ErrorResult, SuccessResult, VercelResponse},
-    models::quote_models::{RandomQuoteDBResult, RandomQuotePartDBResult},
+    models::quote_models::{RandomQuoteDBResult, QuotePartDBResult},
     setup::setup,
 };
-use quoted_api_models::quote::RandomQuoteRequestParams;
+use quoted_api_models::quote::GetRandomQuoteRequestParams;
 use quoted_db::get_default_connection;
 use quoted_db_entity::{self as entity};
 use sea_orm::{
@@ -37,8 +37,8 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     println!("Parsing query params");
     let query_params = match req.uri().query() {
-        None => RandomQuoteRequestParams::default(),
-        Some(query) => match serde_urlencoded::from_str::<RandomQuoteRequestParams>(query) {
+        None => GetRandomQuoteRequestParams::default(),
+        Some(query) => match serde_urlencoded::from_str::<GetRandomQuoteRequestParams>(query) {
             Ok(query) => query,
             Err(_) => return ErrorResult::bad_request("Invalid query parameters").vercel(),
         },
@@ -71,7 +71,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     let query = build_quote_part_query(quote.quote_id, db_backend);
 
     println!("Executing quote parts query");
-    let quote_parts = match RandomQuotePartDBResult::find_by_statement(query)
+    let quote_parts = match QuotePartDBResult::find_by_statement(query)
         .all(&db)
         .await
     {
@@ -91,7 +91,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 }
 
 fn build_quote_query(
-    query_params: RandomQuoteRequestParams,
+    query_params: GetRandomQuoteRequestParams,
     db_backend: DatabaseBackend,
 ) -> Statement {
     // Start by wiring up the required joins

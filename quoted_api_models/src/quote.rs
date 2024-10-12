@@ -1,10 +1,29 @@
 use serde::{Deserialize, Serialize};
+use serde_with::{serde_as, DisplayFromStr};
+
+use crate::page::{PagedRequest, PagedResponse};
+
+///
+/// Defines the accepted request parameters when fetching a random quote.
+///
+pub type GetRandomQuoteRequest = GetRandomQuoteRequestParams;
+
+///
+/// Defines the request parameters that are supported when fetching quotes for a
+/// given episode.
+///
+pub type GetQuotesInEpisodeRequest = PagedRequest<GetQuotesInEpisodeRequestParams>;
+
+///
+/// Defines the response returned when fetching quotes for a given episode.
+///
+pub type GetQuotesInEpisodeResponse = PagedResponse<GetQuotesInEpisodeResponseItem>;
 
 ///
 /// Defines the accepted request parameters when fetching a random quote.
 ///
 #[derive(Debug, Deserialize, Serialize)]
-pub struct RandomQuoteRequestParams {
+pub struct GetRandomQuoteRequestParams {
     ///
     /// The name of the show to fetch a quote for.
     ///
@@ -32,7 +51,7 @@ pub struct RandomQuoteRequestParams {
 /// A quote part can be considered a single characters line within a conversation.
 ///
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct RandomQuotePart {
+pub struct QuotePart {
     ///
     /// The character being quoted.
     ///
@@ -53,7 +72,7 @@ pub struct RandomQuotePart {
 /// Defines a quote that was selected at random.
 ///
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct RandomQuoteResponse {
+pub struct GetRandomQuoteResponse {
     ///
     /// The name of the show the quote belongs to.
     ///
@@ -84,16 +103,66 @@ pub struct RandomQuoteResponse {
     ///
     /// The parts that make up the entire quote.
     ///
-    pub parts: Vec<RandomQuotePart>,
+    pub parts: Vec<QuotePart>,
 }
 
-impl Default for RandomQuoteRequestParams {
+///
+/// Defines the request parameters that are supported when fetching quotes in a
+/// given episode.
+///
+/// Example request URL:
+///      http://base-url/api/show/{show}/season/{season}/episode/{episode}/quotes
+///
+#[serde_as]
+#[derive(Debug, Deserialize, Serialize)]
+pub struct GetQuotesInEpisodeRequestParams {
+    ///
+    /// The name of the show.
+    ///
+    pub show: String,
+
+    ///
+    /// The number of the season within the show.
+    ///
+    #[serde_as(as = "DisplayFromStr")]
+    pub season: i32,
+
+    ///
+    /// The number of the episode within the season.
+    ///
+    #[serde_as(as = "DisplayFromStr")]
+    pub episode: i32,
+}
+
+///
+/// Defines the structure of a quote returned when fetching quotes for a given
+/// episode.
+///
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct GetQuotesInEpisodeResponseItem {
+    ///
+    /// The parts of the conversation that make up the quote.
+    ///
+    pub parts: Vec<QuotePart>,
+}
+
+impl Default for GetRandomQuoteRequestParams {
     fn default() -> Self {
         Self {
             show_name: Default::default(),
             season_no: Default::default(),
             episode_no: Default::default(),
             character_name: Default::default(),
+        }
+    }
+}
+
+impl Default for GetQuotesInEpisodeRequestParams {
+    fn default() -> Self {
+        Self {
+            show: Default::default(),
+            season: Default::default(),
+            episode: Default::default(),
         }
     }
 }

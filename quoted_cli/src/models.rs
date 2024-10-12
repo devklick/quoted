@@ -1,9 +1,9 @@
 use std::{fmt::Display, ops::Deref};
 
-pub struct RandomQuote(pub quoted_api_models::quote::RandomQuoteResponse);
+pub struct RandomQuote(pub quoted_api_models::quote::GetRandomQuoteResponse);
 
 impl Deref for RandomQuote {
-    type Target = quoted_api_models::quote::RandomQuoteResponse;
+    type Target = quoted_api_models::quote::GetRandomQuoteResponse;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -60,10 +60,13 @@ impl Display for RandomQuote {
     }
 }
 
-pub struct ShowsList(pub quoted_api_models::page::PagedResponse<quoted_api_models::show::GetShowsResponseItem>);
+pub struct ShowsList(
+    pub quoted_api_models::page::PagedResponse<quoted_api_models::show::GetShowsResponseItem>,
+);
 
 impl Deref for ShowsList {
-    type Target = quoted_api_models::page::PagedResponse<quoted_api_models::show::GetShowsResponseItem>;
+    type Target =
+        quoted_api_models::page::PagedResponse<quoted_api_models::show::GetShowsResponseItem>;
 
     fn deref(&self) -> &Self::Target {
         &self.0

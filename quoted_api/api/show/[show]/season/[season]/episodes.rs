@@ -4,7 +4,7 @@ use quoted_api::{
     setup::setup,
 };
 use quoted_api_models::episode::{
-    GetShowSeasonEpisodesRequest, GetShowSeasonEpisodesResponse, GetShowSeasonEpisodesResponseItem,
+    GetEpisodesInSeasonRequest, GetEpisodesInSeasonResponse, GetEpisodesInSeasonResponseItem,
 };
 use quoted_db::get_default_connection;
 use quoted_db_entity as entity;
@@ -31,7 +31,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     println!("Parsing query params {:#?}", req.uri().query());
     let query_params = match req.uri().query() {
         None => return ErrorResult::bad_request("Missing required parameters").vercel(),
-        Some(query) => match serde_urlencoded::from_str::<GetShowSeasonEpisodesRequest>(query) {
+        Some(query) => match serde_urlencoded::from_str::<GetEpisodesInSeasonRequest>(query) {
             Ok(query) => query,
             Err(e) => {
                 println!("{:#?}", e);
@@ -59,7 +59,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     let stmt = db.get_database_backend().build(&query);
 
-    let episodes = GetShowSeasonEpisodesResponseItem::find_by_statement(stmt)
+    let episodes = GetEpisodesInSeasonResponseItem::find_by_statement(stmt)
         .all(&db)
         .await;
 
@@ -72,7 +72,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
                 .unwrap()
                 .to_vec();
         }
-        return SuccessResult::ok(GetShowSeasonEpisodesResponse::new(
+        return SuccessResult::ok(GetEpisodesInSeasonResponse::new(
             query_params.page,
             query_params.limit,
             episodes,

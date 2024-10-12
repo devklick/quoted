@@ -1,4 +1,4 @@
-use quoted_api_models::quote::{RandomQuotePart, RandomQuoteResponse};
+use quoted_api_models::quote::{GetRandomQuoteResponse, QuotePart};
 use sea_orm::FromQueryResult;
 use serde::{Deserialize, Serialize};
 
@@ -13,8 +13,8 @@ pub struct RandomQuoteDBResult {
 }
 
 impl RandomQuoteDBResult {
-    pub fn to_api_response(&self) -> RandomQuoteResponse {
-        RandomQuoteResponse {
+    pub fn to_api_response(&self) -> GetRandomQuoteResponse {
+        GetRandomQuoteResponse {
             show_name: self.show_name.clone(),
             episode_name: self.episode_name.clone(),
             episode_no: self.episode_no,
@@ -26,16 +26,16 @@ impl RandomQuoteDBResult {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, FromQueryResult)]
-pub struct RandomQuotePartDBResult {
+pub struct QuotePartDBResult {
     pub quote_id: i32,
     pub character_name: String,
     pub order: i32,
     pub quote_text: String,
 }
 
-impl RandomQuotePartDBResult {
-    pub fn to_api_response(&self) -> RandomQuotePart {
-        RandomQuotePart {
+impl QuotePartDBResult {
+    pub fn to_api_response(&self) -> QuotePart {
+        QuotePart {
             character_name: self.character_name.clone(),
             order: self.order,
             quote_text: self.quote_text.clone(),

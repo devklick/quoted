@@ -7,13 +7,13 @@ use crate::page::{PagedRequest, PagedResponse};
 ///
 /// Defines a request to fetch episodes for a given show and season.
 ///
-pub type GetShowSeasonEpisodesRequest = PagedRequest<GetShowSeasonEpisodesRequestParams>;
+pub type GetEpisodesInSeasonRequest = PagedRequest<GetEpisodesInSeasonRequestParams>;
 
 ///
 /// Defines the response that will be returned when fetching episodes for a given
 /// show and season.
 ///
-pub type GetShowSeasonEpisodesResponse = PagedResponse<GetShowSeasonEpisodesResponseItem>;
+pub type GetEpisodesInSeasonResponse = PagedResponse<GetEpisodesInSeasonResponseItem>;
 
 ///
 /// Defines the request parameters that are supported when fetching the episodes
@@ -21,7 +21,7 @@ pub type GetShowSeasonEpisodesResponse = PagedResponse<GetShowSeasonEpisodesResp
 ///
 #[serde_as]
 #[derive(Deserialize, Serialize, Debug)]
-pub struct GetShowSeasonEpisodesRequestParams {
+pub struct GetEpisodesInSeasonRequestParams {
     ///
     /// The name of the show to fetch episodes for.
     ///
@@ -39,7 +39,7 @@ pub struct GetShowSeasonEpisodesRequestParams {
 /// within a given show and season.
 ///
 #[derive(Serialize, Deserialize, Debug, FromQueryResult, Clone)]
-pub struct GetShowSeasonEpisodesResponseItem {
+pub struct GetEpisodesInSeasonResponseItem {
     ///
     /// The number of the episode within the season
     ///
@@ -52,7 +52,7 @@ pub struct GetShowSeasonEpisodesResponseItem {
     episode_name: Option<String>,
 }
 
-impl Default for GetShowSeasonEpisodesRequestParams {
+impl Default for GetEpisodesInSeasonRequestParams {
     fn default() -> Self {
         Self {
             show: Default::default(),

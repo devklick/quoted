@@ -6,8 +6,11 @@ use quoted_api::{
 use quoted_api_models::show::{GetShowsRequest, GetShowsResponse, GetShowsResponseItem};
 use quoted_db::get_default_connection;
 use quoted_db_entity as entity;
-use sea_orm::{ConnectionTrait, FromQueryResult};
-use sea_orm::{EntityTrait, QueryOrder, QuerySelect, QueryTrait};
+use sea_orm::{
+    prelude::Expr, sea_query::extension::postgres::PgExpr, DatabaseBackend, EntityTrait,
+    QueryOrder, QuerySelect, QueryTrait, Statement,
+};
+use sea_orm::{ConnectionTrait, FromQueryResult, QueryFilter};
 use vercel_runtime::{run, Body, Error, Request, Response};
 
 #[tokio::main]
@@ -40,18 +43,10 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
 
     println!("{:#?}", query_params);
 
+    let db_backend = db.get_database_backend();
+
     println!("Building query");
-    let query = entity::show::Entity::find()
-        .select_only()
-        .column(entity::show::Column::Name)
-        .order_by_asc(entity::show::Column::Name)
-        .limit(query_params.limit + 1)
-        .offset(query_params.limit * (query_params.page - 1))
-        .as_query()
-        .to_owned();
-
-    let stmt = db.get_database_backend().build(&query);
-
+    let stmt = build_query(&query_params, db_backend);
     let shows = GetShowsResponseItem::find_by_statement(stmt).all(&db).await;
 
     if let Ok(mut shows) = shows {
@@ -70,4 +65,20 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     }
     println!("DB Returned error");
     return ErrorResult::server_error("Error finding shows").vercel();
+}
+
+fn build_query(request: &GetShowsRequest, db_backend: DatabaseBackend) -> Statement {
+    let mut query = entity::show::Entity::find()
+        .select_only()
+        .column(entity::show::Column::Name)
+        .order_by_asc(entity::show::Column::Name)
+        .limit(request.limit + 1)
+        .offset(request.limit * (request.page - 1));
+
+    if let Some(name) = &request.query.name {
+        query = query.filter(Expr::col(entity::show::Column::Name).ilike(format!("%{}%", name)));
+    }
+    let query = query.as_query().to_owned();
+
+    db_backend.build(&query)
 }

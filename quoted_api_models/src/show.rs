@@ -18,7 +18,12 @@ pub type GetShowsResponse = PagedResponse<GetShowsResponseItem>;
 /// These are in addition to the parameters provided by `PagedRequest`.
 ///
 #[derive(Serialize, Deserialize, Debug)]
-pub struct GetShowsRequestParams {}
+pub struct GetShowsRequestParams {
+    ///
+    /// Optional query parameter to search shows based on their name
+    ///
+    pub name: Option<String>,
+}
 
 ///
 /// Defines the structure of a show will be included in the response.
@@ -30,6 +35,8 @@ pub struct GetShowsResponseItem {
 
 impl Default for GetShowsRequestParams {
     fn default() -> Self {
-        Self {}
+        Self {
+            name: Default::default(),
+        }
     }
 }

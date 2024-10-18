@@ -40,6 +40,11 @@ pub struct GetSeasonsInShowResponseItem {
     /// The name of the season, if one exists
     ///
     pub season_name: Option<String>,
+
+    ///
+    /// The number of quotes that are linked to this season.
+    ///
+    pub quote_count: i32,
 }
 
 impl Default for GetSeasonsInShowRequestParams {

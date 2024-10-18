@@ -7,8 +7,9 @@ use quoted_api_models::show::{GetShowsRequest, GetShowsResponse, GetShowsRespons
 use quoted_db::get_default_connection;
 use quoted_db_entity as entity;
 use sea_orm::{
-    prelude::Expr, sea_query::extension::postgres::PgExpr, DatabaseBackend, EntityTrait,
-    QueryOrder, QuerySelect, QueryTrait, Statement,
+    prelude::Expr,
+    sea_query::{extension::postgres::PgExpr, Alias},
+    DatabaseBackend, EntityTrait, QueryOrder, QuerySelect, QueryTrait, Statement,
 };
 use sea_orm::{ConnectionTrait, FromQueryResult, QueryFilter};
 use vercel_runtime::{run, Body, Error, Request, Response};
@@ -63,7 +64,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         ))
         .vercel();
     }
-    println!("DB Returned error");
+    println!("DB Returned error, ${}", shows.err().unwrap());
     return ErrorResult::server_error("Error finding shows").vercel();
 }
 
@@ -71,6 +72,14 @@ fn build_query(request: &GetShowsRequest, db_backend: DatabaseBackend) -> Statem
     let mut query = entity::show::Entity::find()
         .select_only()
         .column(entity::show::Column::Name)
+        .column_as(
+            Expr::col(entity::quote::Entity)
+                .count()
+                .cast_as(Alias::new("integer")),
+            "quote_count",
+        )
+        .left_join(entity::quote::Entity)
+        .group_by(entity::show::Column::Name)
         .order_by_asc(entity::show::Column::Name)
         .limit(request.limit + 1)
         .offset(request.limit * (request.page - 1));

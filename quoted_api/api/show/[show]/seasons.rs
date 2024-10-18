@@ -8,7 +8,9 @@ use quoted_api_models::season::{
 };
 use quoted_db::get_default_connection;
 use quoted_db_entity as entity;
-use sea_orm::{ColumnTrait, ConnectionTrait, FromQueryResult, QueryFilter};
+use sea_orm::{
+    prelude::Expr, sea_query::Alias, ColumnTrait, ConnectionTrait, FromQueryResult, QueryFilter,
+};
 use sea_orm::{EntityTrait, QueryOrder, QuerySelect, QueryTrait};
 use vercel_runtime::{run, Body, Error, Request, Response};
 
@@ -47,8 +49,17 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         .select_only()
         .column(entity::season::Column::SeasonNo)
         .column_as(entity::season::Column::Name, "season_name")
+        .column_as(
+            Expr::col(entity::quote::Entity)
+                .count()
+                .cast_as(Alias::new("integer")),
+            "quote_count",
+        )
         .inner_join(entity::show::Entity)
+        .left_join(entity::quote::Entity)
         .filter(entity::show::Column::Name.eq(query_params.query.show))
+        .group_by(entity::season::Column::SeasonNo)
+        .group_by(entity::season::Column::Name)
         .order_by_asc(entity::season::Column::SeasonNo)
         .limit(query_params.limit + 1)
         .offset(query_params.limit * (query_params.page - 1))

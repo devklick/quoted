@@ -50,6 +50,11 @@ pub struct GetEpisodesInSeasonResponseItem {
     /// Not all episodes will have a name.
     ///
     episode_name: Option<String>,
+
+    ///
+    /// The number of quotes linked to this episode
+    ///
+    quote_count: i32,
 }
 
 impl Default for GetEpisodesInSeasonRequestParams {

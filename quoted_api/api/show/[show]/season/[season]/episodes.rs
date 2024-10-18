@@ -8,7 +8,10 @@ use quoted_api_models::episode::{
 };
 use quoted_db::get_default_connection;
 use quoted_db_entity as entity;
-use sea_orm::{ColumnTrait, ConnectionTrait, FromQueryResult, QueryFilter, QueryOrder};
+use sea_orm::{
+    prelude::Expr, sea_query::Alias, ColumnTrait, ConnectionTrait, FromQueryResult, QueryFilter,
+    QueryOrder,
+};
 use sea_orm::{EntityTrait, QuerySelect, QueryTrait};
 use vercel_runtime::{run, Body, Error, Request, Response};
 
@@ -47,13 +50,22 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
         .select_only()
         .column(entity::episode::Column::EpisodeNo)
         .column_as(entity::episode::Column::Name, "episode_name")
+        .column_as(
+            Expr::col(entity::quote::Entity)
+                .count()
+                .cast_as(Alias::new("integer")),
+            "quote_count",
+        )
         .inner_join(entity::season::Entity)
         .inner_join(entity::show::Entity)
+        .left_join(entity::quote::Entity)
         .filter(entity::show::Column::Name.eq(query_params.query.show))
         .filter(entity::season::Column::SeasonNo.eq(query_params.query.season))
         .limit(query_params.limit + 1)
         .offset(query_params.limit * (query_params.page - 1))
         .order_by_asc(entity::episode::Column::EpisodeNo)
+        .group_by(entity::episode::Column::EpisodeNo)
+        .group_by(entity::episode::Column::Name)
         .as_query()
         .to_owned();
 

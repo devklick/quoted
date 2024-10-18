@@ -30,7 +30,15 @@ pub struct GetShowsRequestParams {
 ///
 #[derive(Serialize, Deserialize, FromQueryResult, Debug, Clone)]
 pub struct GetShowsResponseItem {
+    ///
+    /// The name of the show
+    ///
     pub name: String,
+
+    ///
+    /// The number of quotes linked to this show.
+    ///
+    pub quote_count: i32,
 }
 
 impl Default for GetShowsRequestParams {

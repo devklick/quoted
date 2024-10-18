@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_with::{serde_as, DisplayFromStr};
 
 use crate::page::{PagedRequest, PagedResponse};
 
@@ -8,16 +7,21 @@ use crate::page::{PagedRequest, PagedResponse};
 ///
 pub type GetRandomQuoteRequest = GetRandomQuoteRequestParams;
 
+//HACK: Cant use PagedRequest<GetQuotesParams>
+// because of bug: https://github.com/nox/serde_urlencoded/issues/33
+// Workaround using DisplayFromStr doesnt work for Option fields.
+// Only option I can see for now is just to not use the PagedRequest when the
+// inner struct contains optional fields.
 ///
 /// Defines the request parameters that are supported when fetching quotes for a
 /// given episode.
 ///
-pub type GetQuotesInEpisodeRequest = PagedRequest<GetQuotesInEpisodeRequestParams>;
+pub type GetQuotesRequest = GetQuotesParams; // PagedRequest<GetQuotesParams>;
 
 ///
-/// Defines the response returned when fetching quotes for a given episode.
+/// Defines the response returned when fetching quotes.
 ///
-pub type GetQuotesInEpisodeResponse = PagedResponse<GetQuotesInEpisodeResponseItem>;
+pub type GetQuotesResponse = PagedResponse<GetQuotesResponseItem>;
 
 ///
 /// Defines the accepted request parameters when fetching a random quote.
@@ -72,7 +76,7 @@ pub struct QuotePart {
 /// Defines a quote that was selected at random.
 ///
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct GetRandomQuoteResponse {
+pub struct GetQuotesResponseItem {
     ///
     /// The name of the show the quote belongs to.
     ///
@@ -113,38 +117,50 @@ pub struct GetRandomQuoteResponse {
 /// Example request URL:
 ///      http://base-url/api/show/{show}/season/{season}/episode/{episode}/quotes
 ///
-#[serde_as]
 #[derive(Debug, Deserialize, Serialize)]
-pub struct GetQuotesInEpisodeRequestParams {
+#[serde(default)]
+pub struct GetQuotesParams {
+    // Temporarily include page params on this struct due to bug in serde
+    ///
+    /// The page number to be fetched.
+    /// Defaults to `1`.
+    ///
+    pub page: u64,
+
+    ///
+    /// The maximum number of items to include on the page.
+    /// Defaults to `10``.
+    ///
+    pub limit: u64,
+
     ///
     /// The name of the show.
     ///
-    pub show: String,
+    pub show_name: Option<String>,
 
     ///
     /// The number of the season within the show.
     ///
-    #[serde_as(as = "DisplayFromStr")]
-    pub season: i32,
+    // #[serde_as(as = "DisplayFromStr")]
+    pub season_no: Option<i32>,
 
     ///
     /// The number of the episode within the season.
     ///
-    #[serde_as(as = "DisplayFromStr")]
-    pub episode: i32,
+    pub episode_no: Option<i32>,
 }
 
-///
-/// Defines the structure of a quote returned when fetching quotes for a given
-/// episode.
-///
-#[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct GetQuotesInEpisodeResponseItem {
-    ///
-    /// The parts of the conversation that make up the quote.
-    ///
-    pub parts: Vec<QuotePart>,
-}
+// ///
+// /// Defines the structure of a quote returned when fetching quotes for a given
+// /// episode.
+// ///
+// #[derive(Debug, Deserialize, Serialize, Clone)]
+// pub struct GetQuotesInEpisodeResponseItem {
+//     ///
+//     /// The parts of the conversation that make up the quote.
+//     ///
+//     pub parts: Vec<QuotePart>,
+// }
 
 impl Default for GetRandomQuoteRequestParams {
     fn default() -> Self {
@@ -157,12 +173,15 @@ impl Default for GetRandomQuoteRequestParams {
     }
 }
 
-impl Default for GetQuotesInEpisodeRequestParams {
+impl Default for GetQuotesParams {
     fn default() -> Self {
+        let pagination = PagedRequest::<i32>::default();
         Self {
-            show: Default::default(),
-            season: Default::default(),
-            episode: Default::default(),
+            show_name: Default::default(),
+            season_no: Default::default(),
+            episode_no: Default::default(),
+            limit: pagination.limit,
+            page: pagination.page,
         }
     }
 }

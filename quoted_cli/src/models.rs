@@ -1,9 +1,9 @@
 use std::{fmt::Display, ops::Deref};
 
-pub struct RandomQuote(pub quoted_api_models::quote::GetRandomQuoteResponse);
+pub struct RandomQuote(pub quoted_api_models::quote::GetQuotesResponseItem);
 
 impl Deref for RandomQuote {
-    type Target = quoted_api_models::quote::GetRandomQuoteResponse;
+    type Target = quoted_api_models::quote::GetQuotesResponseItem;
 
     fn deref(&self) -> &Self::Target {
         &self.0

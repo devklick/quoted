@@ -77,8 +77,6 @@ impl<T> PagedResponse<T>
 where
     T: Serialize,
 {
-    ///
-    ///
     pub fn new(page: u64, limit: u64, data: Vec<T>, has_more: bool) -> Self {
         PagedResponse::<T> {
             page,

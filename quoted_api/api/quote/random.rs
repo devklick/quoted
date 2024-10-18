@@ -1,7 +1,7 @@
 use http::Method;
 use quoted_api::{
     api_response::{ErrorResult, SuccessResult, VercelResponse},
-    models::quote_models::{RandomQuoteDBResult, QuotePartDBResult},
+    models::quote_models::{QuoteDBResult, QuotePartDBResult},
     setup::setup,
 };
 use quoted_api_models::quote::GetRandomQuoteRequestParams;
@@ -50,7 +50,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     let query = build_quote_query(query_params, db_backend);
 
     println!("Executing quote query");
-    let quote = match RandomQuoteDBResult::find_by_statement(query).one(&db).await {
+    let quote = match QuoteDBResult::find_by_statement(query).one(&db).await {
         Err(e) => {
             println!(
                 "DB Returned error when looking for quote\n{}",
@@ -71,10 +71,7 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     let query = build_quote_part_query(quote.quote_id, db_backend);
 
     println!("Executing quote parts query");
-    let quote_parts = match QuotePartDBResult::find_by_statement(query)
-        .all(&db)
-        .await
-    {
+    let quote_parts = match QuotePartDBResult::find_by_statement(query).all(&db).await {
         Err(e) => {
             println!(
                 "DB Returned error when looking for quote parts\n{}",

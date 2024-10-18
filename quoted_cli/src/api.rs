@@ -39,7 +39,7 @@ pub async fn get_random(
         .or_else(|e| Err(format!("Error calling API\n{e}")))?;
 
     let quote = response
-        .json::<api_models::quote::GetRandomQuoteResponse>()
+        .json::<api_models::quote::GetQuotesResponseItem>()
         .await
         .or_else(|e| Err(format!("Error parsing response\n{e}")))?;
 

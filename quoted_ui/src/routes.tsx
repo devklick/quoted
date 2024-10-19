@@ -22,6 +22,7 @@ function defineRoute(path: string): RouteDefinition {
 }
 
 export const routeDefinitions = {
+  home: defineRoute(""),
   shows: defineRoute("shows"),
   showQuotes: defineRoute("show/quotes"),
   characters: defineRoute("characters"),
@@ -30,8 +31,8 @@ export const routeDefinitions = {
 
 const navItems: Array<NavItem> = [
   { title: "Shows", path: routeDefinitions.shows.path },
-  { title: "Characters", path: routeDefinitions.characters.path },
-  { title: "Random Quote", path: routeDefinitions.randomQuote.path },
+  { title: "Characters (WIP)", path: routeDefinitions.characters.path },
+  { title: "Random Quote (WIP)", path: routeDefinitions.randomQuote.path },
 ];
 
 const routes: Array<RouteObject> = [

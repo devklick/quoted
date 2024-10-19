@@ -6,6 +6,7 @@ import Github from "../../assets/github.svg";
 import { BurgerMenuIcon } from "../Navigation/BurgerMenu";
 
 import styles from "./Header.module.scss";
+import { routeDefinitions } from "../../routes";
 
 interface HeaderProps {
   burgerOpen: boolean;
@@ -16,7 +17,10 @@ function Header({ burgerOpen, toggleBurger }: HeaderProps) {
   const nav = useNavigate();
   return (
     <header className={styles["header"]}>
-      <h1 onClick={() => nav("/")} className={styles["header__text"]}>
+      <h1
+        onClick={() => nav(routeDefinitions.home.path)}
+        className={styles["header__text"]}
+      >
         Quoted
       </h1>
       <div className={styles["header__right"]}>

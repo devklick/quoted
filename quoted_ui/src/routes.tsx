@@ -26,9 +26,11 @@ const navItems: Array<NavItem> = [
   { title: "Random Quote", path: routeDefinitions.randomQuote.path },
 ];
 
+const basePath = import.meta.env.DEV ? "/" : "/quoted";
+
 const routes: Array<RouteObject> = [
   {
-    path: "/",
+    path: basePath,
     element: <Layout navItems={navItems} />,
     children: [
       {

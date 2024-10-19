@@ -4,7 +4,12 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
-export const proxy = axios.create({ baseURL: "/api" });
+const baseURL =
+  import.meta.env.MODE === "development"
+    ? "/api"
+    : import.meta.env.VITE_BASE_URL;
+
+export const proxy = axios.create({ baseURL });
 
 // Adding interceptors
 

@@ -30,6 +30,8 @@ jobs:
     defaults:
       run:
         working-directory: ./quoted_ui
+    env: 
+      VITE_BASE_URL: https://quoted-delta.vercel.app/api/
     steps:
       - name: Checkout
         uses: actions/checkout@v4

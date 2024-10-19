@@ -7,8 +7,6 @@ import { NavItem } from "./Layout/Navigation/NavList";
 
 const basePath = import.meta.env.BASE_URL || "/";
 
-console.log("basePath", basePath);
-
 interface RouteDefinition {
   path: string;
 }
@@ -30,8 +28,6 @@ export const routeDefinitions = {
   characters: defineRoute("characters"),
   randomQuote: defineRoute("quote/random"),
 } as const;
-
-console.log("routeDefinitions", routeDefinitions);
 
 const navItems: Array<NavItem> = [
   { title: "Shows", path: routeDefinitions.shows.path },

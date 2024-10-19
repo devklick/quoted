@@ -33,6 +33,9 @@ function Quotes({}: QuotesProps) {
         <ul className={styles["quotes__list"]}>
           {result.data.data.map((d) => (
             <QuoteListItem
+              key={`quote-${d.showName}-${d.seasonNo}-${
+                d.episodeNo
+              }=${JSON.stringify(d.parts)}`}
               episodeNo={d.episodeNo}
               parts={d.parts}
               seasonNo={d.seasonNo}
@@ -90,7 +93,12 @@ function QuoteListItem({
         {parts
           .sort((a, b) => a.order - b.order)
           .map((p) => (
-            <li className={styles["quote-list-item__parts-list-item"]}>
+            <li
+              key={`quote-${showName}-${seasonNo}-${episodeNo}=${JSON.stringify(
+                p
+              )}`}
+              className={styles["quote-list-item__parts-list-item"]}
+            >
               <span>{p.quoteText}</span>
               <span>{p.characterName}</span>
             </li>

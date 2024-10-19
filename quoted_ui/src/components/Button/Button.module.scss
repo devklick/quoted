@@ -1,0 +1,54 @@
+@import "src/_globals.scss";
+
+.button {
+  height: 100%;
+  border-radius: 6px;
+  display: inline-block;
+  border: 0px solid $color-white;
+  line-height: 0;
+  transition: 0.3s;
+  box-sizing: border-box;
+  color: $color-white;
+  font-weight: normal;
+
+  &:active {
+    box-shadow: 1px 1px 1px 0px $color-black inset;
+  }
+
+  &__primary {
+    background-color: $color-primary;
+  }
+
+  &__secondary {
+    background-color: $color-secondary;
+    transition: 0s;
+    &:hover {
+      border: 1px solid $color-white;
+    }
+  }
+
+  &__subtle {
+    border: 1px solid transparent;
+
+    &--active {
+      border: 1px solid $color-white !important;
+      background: $color-background-2;
+    }
+
+    &--disabled {
+      &:active {
+        border: 1px solid $color-black !important;
+        background: $color-background-2;
+      }
+    }
+
+    &:active {
+      border: 1px solid $color-white;
+      background: $color-background-2;
+    }
+
+    &:hover {
+      background: $color-background-2;
+    }
+  }
+}

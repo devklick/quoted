@@ -1,0 +1,35 @@
+@import "src/_globals.scss";
+
+.pagination {
+  margin-top: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  max-width: 460px;
+  width: 100%;
+  font-size: 12px;
+}
+
+.page-numbers,
+.page-sizes {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-number-buttons,
+.page-size-buttons {
+  display: none;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  padding: 5px;
+  line-height: 14px;
+
+  button {
+    height: 28px;
+    min-width: 28px;
+  }
+}

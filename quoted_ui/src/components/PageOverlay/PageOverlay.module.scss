@@ -1,0 +1,61 @@
+@import "src/_globals.scss";
+
+.page-overlay {
+  position: absolute;
+  margin-top: 1px;
+  background-color: rgb($color-black, 0.1);
+  backdrop-filter: blur(10px);
+  z-index: 0;
+
+  // Super hacky, probably a better way to do this.
+  // defaults to having no size so as not
+  // to interfere with clicks etc
+  opacity: 0;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+
+  &--active {
+    // we need forwards here in order for the animation not to
+    // reset once it reaches the end.
+    animation: fade-in 0.2s forwards ease-in;
+  }
+  &--inactive {
+    // we dont want forwards here because we want the animation
+    // to reset at the end, going back to having no size
+    animation: fade-out 0.2s ease-in;
+  }
+
+  // Fading in starts the animation in full size,
+  // no opacity, moving to full opacity
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      visibility: visible;
+    }
+    100% {
+      opacity: 100%;
+      width: 100%;
+      height: 100%;
+      visibility: visible;
+    }
+  }
+  // Fading out starts the animation in full size,
+  // no full opacity moving to no opacity
+  @keyframes fade-out {
+    0% {
+      opacity: 100%;
+      width: 100%;
+      height: 100%;
+      visibility: visible;
+    }
+    100% {
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      visibility: visible;
+    }
+  }
+}

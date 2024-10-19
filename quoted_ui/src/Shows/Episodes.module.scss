@@ -1,0 +1,28 @@
+@import "src/_globals.scss";
+
+.episodes {
+  width: 100%;
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 10px 5px;
+  background-color: $color-background-3;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.episode-list-item {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  height: 60px;
+  box-sizing: border-box;
+  align-items: center;
+  background: $color-background-1;
+  padding: 0 20px;
+}

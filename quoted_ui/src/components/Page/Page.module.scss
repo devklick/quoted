@@ -1,0 +1,24 @@
+@import "src/_globals.scss";
+
+.page {
+  max-width: 800px;
+  width: 100%;
+  height: fit-content;
+  margin: 8px;
+  padding: 40px 20px;
+  background-color: $color-background-1;
+  border: solid 1px $color-background-3;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 20px;
+
+  @include md {
+    margin: 40px;
+  }
+
+  h1 {
+    margin-bottom: 40px;
+  }
+}

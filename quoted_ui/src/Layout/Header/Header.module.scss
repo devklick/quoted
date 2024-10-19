@@ -1,0 +1,40 @@
+@import "src/_globals.scss";
+
+.header {
+  height: $header-height;
+  width: 100%;
+  padding: 10px 10px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  cursor: default;
+  background-color: $color-background-3;
+  user-select: none;
+  background: linear-gradient(
+    to right,
+    $color-background-3 0,
+    $color-background-3 $side-nav-width,
+    $color-background-1
+  );
+
+  justify-content: space-between;
+
+  color: #fff;
+
+  text-shadow:
+    0 0 12px transparent,
+    0 0 9px transparent,
+    0 0 16px $color-white;
+
+  &__right {
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+
+    .icon-github {
+      height: 100%;
+    }
+  }
+}

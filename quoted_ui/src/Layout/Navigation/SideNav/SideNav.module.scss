@@ -1,0 +1,13 @@
+@import "src/_globals.scss";
+
+.side-nav {
+  display: none;
+  width: $side-nav-width;
+  min-width: $side-nav-width;
+  z-index: 1;
+  background: linear-gradient($color-background-3, $color-background-1);
+
+  @include md {
+    display: block;
+  }
+}

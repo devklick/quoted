@@ -34,13 +34,17 @@ async fn main() -> Result<(), SeedError> {
 
     Migrator::up(&db, None).await?;
 
-    let shows = sheets::get_shows(&hub, &args.shows_sheet_id).await?;
+    if args.shows {
+        let shows = sheets::get_shows(&hub, &args.shows_sheet_id).await?;
 
-    seeder::seed_shows(&db, &mut id_factory, shows).await?;
+        seeder::seed_shows(&db, &mut id_factory, shows).await?;
+    }
 
-    let quotes = sheets::get_quotes(&hub, &args.quotes_sheet_id).await?;
+    if args.quotes {
+        let quotes = sheets::get_quotes(&hub, &args.quotes_sheet_id).await?;
 
-    seeder::seed_quotes(&db, &mut id_factory, quotes).await?;
+        seeder::seed_quotes(&db, &mut id_factory, quotes).await?;
+    }
 
     return Ok(());
 }

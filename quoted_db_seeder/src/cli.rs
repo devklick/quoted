@@ -26,4 +26,14 @@ pub struct Args {
         env = "QUOTED_DB_SEEDER__QUOTES_GOOGLE_SHEET_ID"
     )]
     pub quotes_sheet_id: String,
+
+    #[arg(
+        long,
+        help = "Whether or not to seed shows, seasons and episodes",
+        default_value_t = false
+    )]
+    pub shows: bool,
+
+    #[arg(long, help = "Whether or not to seed quotes", default_value_t = false)]
+    pub quotes: bool,
 }

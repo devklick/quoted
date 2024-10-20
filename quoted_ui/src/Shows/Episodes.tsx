@@ -9,15 +9,15 @@ import NavToQuotesButton from "./NavToQuotesButton";
 interface EpisodesProps {
   showName: string;
   seasonNo: number;
-  enabled: boolean;
+  getEpisodesEnabled: boolean;
 }
 
-function Episodes({ enabled: _enabled, seasonNo, showName }: EpisodesProps) {
+function Episodes({ getEpisodesEnabled, seasonNo, showName }: EpisodesProps) {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    setEnabled(_enabled);
-  }, [_enabled]);
+    setEnabled(getEpisodesEnabled);
+  }, [getEpisodesEnabled]);
 
   const [result, { limit, nextPage, page, previousPage, setLimit, setPage }] =
     useGetEpisodes({ showName, seasonNo, enabled });

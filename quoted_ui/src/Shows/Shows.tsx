@@ -57,8 +57,8 @@ function Shows({}: ShowsProps) {
         </div>
       </div>
 
-      {result.status === "pending" && <Loading />}
-      {result.status === "success" && (
+      {result.isPending && <Loading />}
+      {result.isSuccess && (
         <div className={styles["shows__list"]}>
           {result.data.data.map((show) => (
             <ShowListItem
@@ -88,14 +88,14 @@ interface ShowListItemProps {
 }
 
 function ShowListItem({ showName, quoteCount }: ShowListItemProps) {
-  const [displaySeasons, setDisplaySeasons] = useState(false);
+  const [getSeasonsEnabled, setGetSeasonsEnabled] = useState(false);
 
   function onExpanded() {
-    setDisplaySeasons(true);
+    setGetSeasonsEnabled(true);
   }
 
   function onCollapsed() {
-    setDisplaySeasons(false);
+    setGetSeasonsEnabled(false);
   }
 
   return (
@@ -107,7 +107,7 @@ function ShowListItem({ showName, quoteCount }: ShowListItemProps) {
       onCollapse={onCollapsed}
       onExpanded={onExpanded}
     >
-      <Seasons showName={showName} enabled={displaySeasons} />
+      <Seasons showName={showName} getSeasonsEnabled={getSeasonsEnabled} />
     </Accordion>
   );
 }

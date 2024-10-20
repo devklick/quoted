@@ -11,15 +11,15 @@ import NavToQuotesButton from "./NavToQuotesButton";
 
 interface SeasonsProps {
   showName: string;
-  enabled: boolean;
+  getSeasonsEnabled: boolean;
 }
 
-function Seasons({ showName, enabled: _enabled }: SeasonsProps) {
+function Seasons({ showName, getSeasonsEnabled }: SeasonsProps) {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    setEnabled(_enabled);
-  }, [_enabled]);
+    setEnabled(getSeasonsEnabled);
+  }, [getSeasonsEnabled]);
 
   const [result, { limit, nextPage, page, previousPage, setLimit, setPage }] =
     useGetSeasons({ showName, enabled });
@@ -91,7 +91,7 @@ function SeasonListItem({
       <Episodes
         showName={showName}
         seasonNo={seasonNo}
-        enabled={displayEpisodes}
+        getEpisodesEnabled={displayEpisodes}
       />
     </Accordion>
   );

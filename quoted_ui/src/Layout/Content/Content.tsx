@@ -14,6 +14,7 @@ interface ContentProps {
 function Content({ children, disableBorderRadius }: ContentProps) {
   return (
     <div
+      id="content"
       className={clsx({
         [styles["content"]]: true,
         [styles["content--no-radius"]]: disableBorderRadius,

@@ -4,14 +4,21 @@ interface UseToggleParams {
   defaultValue?: boolean;
 }
 type ToggleFn = () => void;
-type UseToggleReturn = [boolean, { toggle: ToggleFn }];
+type SetToggledFn = (value: boolean) => void;
+type UseToggleReturn = [
+  boolean,
+  { toggle: ToggleFn; setToggled: SetToggledFn }
+];
 
 function useToggle(params?: UseToggleParams): UseToggleReturn {
   const [value, setValue] = useState(params?.defaultValue ?? false);
   function toggle() {
     setValue(!value);
   }
-  return [value, { toggle }];
+  function setToggled(value: boolean) {
+    setValue(value);
+  }
+  return [value, { toggle, setToggled }];
 }
 
 export default useToggle;

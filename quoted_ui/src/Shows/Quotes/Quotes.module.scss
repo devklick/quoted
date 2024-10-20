@@ -22,6 +22,7 @@
 
   &__title {
     padding: 10px;
+    text-align: center;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -47,8 +48,8 @@
       width: 100%;
       display: flex;
       flex-direction: column;
+      align-items: end;
       background-color: $color-background-3;
-      border-radius: 6px;
 
       @include md {
         justify-content: space-between;
@@ -60,18 +61,29 @@
         text-align: right;
       }
 
-      span {
+      &:first-of-type {
+        border-top-right-radius: 6px;
+        border-top-left-radius: 6px;
+      }
+
+      &:last-of-type {
+        border-bottom-right-radius: 6px;
+        border-bottom-left-radius: 6px;
+      }
+
+      &__quote-text,
+      &__character {
         width: 100%;
         text-align: left;
-        &:nth-child(2n) {
-          text-align: right;
-        }
         @include md {
           max-width: 50%;
-          &:nth-child(2n) {
-            text-align: right;
-          }
         }
+      }
+
+      &__character {
+        text-align: right;
+        font-size: 12px;
+        font-style: italic;
       }
     }
   }

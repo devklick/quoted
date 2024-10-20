@@ -1,11 +1,13 @@
-import useValidatedQueryParams from "../../hooks/useValidatedQueryParams";
-import { quotesQueryParamsSchema } from "./schema";
-
-import styles from "./Quotes.module.scss";
-import { useGetQuotes } from "./queries";
-import { QuotePart } from "../../services/quoted-api-models";
 import Pagination from "../../components/Pagination";
 import Loading from "../../components/Loading";
+
+import useValidatedQueryParams from "../../hooks/useValidatedQueryParams";
+import { QuotePart } from "../../services/quoted-api-models";
+
+import { quotesQueryParamsSchema } from "./schema";
+import { useGetQuotes } from "./queries";
+
+import styles from "./Quotes.module.scss";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface QuotesProps {}
@@ -77,7 +79,7 @@ function QuoteListItem({
   seasonName,
 }: QuoteListItemProps) {
   const buildName = (type: string, no: number, name?: string) =>
-    [type, no, name].filter(Boolean).join(" - ");
+    [`${type} ${no}`, name].filter(Boolean).join(" - ");
   return (
     <li className={styles["quote-list-item"]}>
       <div className={styles["quote-list-item__title"]}>
@@ -99,8 +101,20 @@ function QuoteListItem({
               )}`}
               className={styles["quote-list-item__parts-list-item"]}
             >
-              <span>{p.quoteText}</span>
-              <span>{p.characterName}</span>
+              <span
+                className={
+                  styles["quote-list-item__parts-list-item__quote-text"]
+                }
+              >
+                {p.quoteText}
+              </span>
+              <span
+                className={
+                  styles["quote-list-item__parts-list-item__character"]
+                }
+              >
+                {p.characterName}
+              </span>
             </li>
           ))}
       </ul>

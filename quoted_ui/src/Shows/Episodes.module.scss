@@ -20,9 +20,14 @@
   justify-content: space-between;
   border: 1px solid transparent;
   border-radius: 12px;
-  height: 60px;
+  min-height: 60px;
+  height: 100%;
   box-sizing: border-box;
   align-items: center;
   background: $color-background-1;
-  padding: 0 20px;
+  padding: 10px 10px;
+
+  span {
+    max-width: 70%;
+  }
 }

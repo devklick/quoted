@@ -351,7 +351,7 @@ where
         return Ok(None);
     }
 
-    Ok(Some(str.parse::<T>().or(Err(format!(
+    Ok(Some(str.trim().parse::<T>().or(Err(format!(
         "Cell {cell_index} value {raw} is invalid"
     )))?))
 }

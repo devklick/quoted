@@ -6,7 +6,7 @@ import Github from "../../assets/github.svg";
 import { BurgerMenuIcon } from "../Navigation/BurgerMenu";
 
 import styles from "./Header.module.scss";
-import { routeDefinitions } from "../../routes";
+import routeDefinitions from "../../route-definitions";
 
 interface HeaderProps {
   burgerOpen: boolean;

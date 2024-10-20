@@ -1,6 +1,6 @@
 import { createSearchParams, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
-import { routeDefinitions } from "../routes";
+import routeDefinitions from "../route-definitions";
 
 interface NavToQuotesButtonProps {
   showName?: string;

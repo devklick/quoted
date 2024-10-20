@@ -4,13 +4,12 @@ import Shows from "./Shows";
 import Home from "./Home";
 import PageContent from "./components/Page";
 import { NavItem } from "./Layout/Navigation/NavList";
-
-const basePath = import.meta.env.BASE_URL || "/";
+import routeDefinitions, { baseRoute } from "./route-definitions";
 
 /*
   TODO: Reset or retain scroll position based on action. 
   Currently, when navigating from one page to another (e.g. /shows to / (home)), 
-  the scroll position from scrolls is persisted when you reach home, 
+  the scroll position from shows is persisted when you reach home, 
   so that if you were half way down the /shows page, you end up half way down
   the home page. This is unwanted. 
 
@@ -32,28 +31,6 @@ const basePath = import.meta.env.BASE_URL || "/";
   https://reactrouter.com/en/main/components/scroll-restoration
 */
 
-interface RouteDefinition {
-  path: string;
-}
-
-function defineRoute(path: string): RouteDefinition {
-  return {
-    path: [basePath, path]
-      .filter(Boolean)
-      .map((p) => (p.endsWith("/") ? p : p + "/"))
-      .join("")
-      .slice(0, -1),
-  };
-}
-
-export const routeDefinitions = {
-  home: defineRoute(""),
-  shows: defineRoute("shows"),
-  showQuotes: defineRoute("show/quotes"),
-  characters: defineRoute("characters"),
-  randomQuote: defineRoute("quote/random"),
-} as const;
-
 const navItems: Array<NavItem> = [
   { title: "Shows", path: routeDefinitions.shows.path },
   { title: "Characters (WIP)", path: routeDefinitions.characters.path },
@@ -62,7 +39,7 @@ const navItems: Array<NavItem> = [
 
 const routes: Array<RouteObject> = [
   {
-    path: basePath,
+    path: baseRoute,
     element: <Layout navItems={navItems} />,
     children: [
       {

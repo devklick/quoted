@@ -11,7 +11,7 @@ export default defineConfig(({ command, mode }) => {
       cors: true,
       proxy: {
         "/api": {
-          target: env.VITE_BASE_URL,
+          target: env.VITE_BASE_API_URL,
           changeOrigin: true,
         },
       },

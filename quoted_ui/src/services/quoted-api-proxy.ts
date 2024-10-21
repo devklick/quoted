@@ -4,7 +4,9 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
-const baseURL = import.meta.env.DEV ? "/api" : import.meta.env.VITE_BASE_URL;
+const baseURL = import.meta.env.DEV
+  ? "/api"
+  : import.meta.env.VITE_BASE_API_URL;
 
 export const proxy = axios.create({ baseURL });
 

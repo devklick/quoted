@@ -1,0 +1,48 @@
+name: Deploy UI to Vercel
+
+on:
+  push:
+    branches:
+      - dev
+env:
+  VERCEL_ORG_ID: ${{secrets.VERCEL_ORG_ID}}
+  
+jobs:
+  deploy-ui:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_PROJECT_ID: ${{secrets.QUOTED_UI_VERCEL_PROJECT_ID}}
+      VITE_BASE_API_URL: https://devklick-quoted-api.vercel.app/api/
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      
+      - name: Build
+        run: vc build --prod --token=${{ secrets.VERCEL_TOKEN }} --debug
+      
+      - name: Deploy
+        run: vc deploy --prod --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --debug
+
+  deploy-api:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_PROJECT_ID: ${{secrets.QUOTED_API_VERCEL_PROJECT_ID}}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      
+      - name: Build
+        run: vc build --prod --token=${{ secrets.VERCEL_TOKEN }} --debug
+      
+      - name: Deploy
+        run: vc deploy --prod --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --debug

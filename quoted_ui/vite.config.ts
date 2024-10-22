@@ -6,7 +6,7 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd());
   return {
     plugins: [react(), svgr()],
-    base: command === "build" ? "quoted" : undefined,
+    // base: command === "build" ? "quoted" : undefined,
     server: {
       cors: true,
       proxy: {

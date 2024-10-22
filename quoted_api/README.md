@@ -1,7 +1,7 @@
 # Quoted API
 
 The Quoted API is an API written in Rust. Each endpoint (or group of endpoints) is hosted hosted as a Vercel serverless function.
-At the time of writing this, it's deployed to https://quoted-delta.vercel.app, and consists of the following endpoints. 
+At the time of writing this, it's deployed to https://devklick-quoted-api.vercel.app, and consists of the following endpoints. 
 
 - `/api/shows` - Lists the available shows
 - `/api/quote/random` - Gets a random quote from a show/season/episode/character

@@ -5,7 +5,7 @@ on:
     branches:
       - dev
 env:
-  VERCEL_ORG_ID: ${{secrets.QUOTED_API_VERCELL_ORG_ID}}
+  VERCEL_ORG_ID: ${{secrets.VERCEL_ORG_ID}}
   VERCEL_PROJECT_ID: ${{secrets.QUOTED_API_VERCEL_PROJECT_ID}}
 
 jobs:

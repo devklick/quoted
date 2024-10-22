@@ -6,12 +6,13 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
   return {
     plugins: [react(), svgr()],
-    // base: command === "build" ? "quoted" : undefined,
+
     server: {
       cors: true,
       proxy: {
         "/api": {
-          target: env.VITE_BASE_API_URL,
+          target:
+            env.VITE_BASE_API_URL || "https://devklick-quoted-api.vercel.app",
           changeOrigin: true,
         },
       },

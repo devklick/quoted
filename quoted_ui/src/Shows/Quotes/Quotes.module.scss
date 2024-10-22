@@ -51,11 +51,6 @@
       align-items: end;
       background-color: $color-background-3;
 
-      @include md {
-        justify-content: space-between;
-        flex-direction: row;
-      }
-
       &:nth-child(2n) {
         background-color: $color-background-1;
         text-align: right;
@@ -73,14 +68,11 @@
 
       &__quote-text,
       &__character {
-        width: 100%;
-        text-align: left;
-        @include md {
-          max-width: 50%;
-        }
+        align-self: flex-start;
       }
 
       &__character {
+        align-self: flex-end;
         text-align: right;
         font-size: 12px;
         font-style: italic;

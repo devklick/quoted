@@ -10,7 +10,7 @@
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://devklick.github.io"
+          "value": "https://devklick.github.io, https://devklick-quoted.vercel.app/"
         },
         {
           "key": "Access-Control-Allow-Methods",

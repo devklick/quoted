@@ -31,7 +31,7 @@ jobs:
       run:
         working-directory: ./quoted_ui
     env: 
-      VITE_BASE_API_URL: https://devklick-quoted.vercel.app/api/
+      VITE_BASE_API_URL: https://devklick-quoted-api.vercel.app/api/
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -1,3 +1,4 @@
+use cookie::{Cookie, CookieJar};
 use http::Method;
 use quoted_api::{
     api_response::{ErrorResult, SuccessResult, VercelResponse},
@@ -29,6 +30,16 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
 
 async fn get(req: Request) -> Result<Response<Body>, Error> {
     println!("Request received");
+
+    let mut jar = CookieJar::new();
+    let cookie = Cookie::build(("name", "value"))
+        .domain("https://devklick-quoted.vercel.app")
+        .path("/")
+        .secure(true)
+        .http_only(true);
+
+    jar.add(cookie);
+    jar.remove(Cookie::build("name").path("/"));
 
     println!("Getting DB Connection");
     let db = get_default_connection().await?;

@@ -34,9 +34,9 @@ async fn get(req: Request) -> Result<Response<Body>, Error> {
     let mut jar = CookieJar::new();
     let cookie = Cookie::build(("name", "value"))
         .domain("https://devklick-quoted.vercel.app")
-        .path("/")
-        .secure(true)
-        .http_only(true);
+        .path("/");
+    // .secure(true)
+    // .http_only(true);
 
     jar.add(cookie);
     jar.remove(Cookie::build("name").path("/"));

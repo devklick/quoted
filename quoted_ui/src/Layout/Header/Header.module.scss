@@ -26,6 +26,17 @@
     0 0 9px transparent,
     0 0 16px $color-white;
 
+  &__text {
+    cursor: pointer;
+    transition: 0.3s ease;
+    &:hover {
+      text-shadow:
+        0 0 14px $color-white,
+        0 0 9px $color-background-3,
+        0 0 16px white;
+    }
+  }
+
   &__right {
     height: 100%;
     box-sizing: border-box;
@@ -35,6 +46,7 @@
 
     .icon-github {
       height: 100%;
+      color: black;
     }
   }
 }

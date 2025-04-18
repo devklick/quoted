@@ -24,13 +24,14 @@ function Header({ burgerOpen, toggleBurger }: HeaderProps) {
         Quoted
       </h1>
       <div className={styles["header__right"]}>
-        <Button
-          type="ghost"
-          onClick={() => open("https://github.com/devklick/quoted")}
-        >
-          <img src={Github} className={styles["icon-github"]} />
+        <a href="https://github.com/devklick/quoted" target="_blank">
+          <Button type="ghost">
+            <img src={Github} className={styles["icon-github"]} />
+          </Button>
+        </a>
+        <Button type="ghost">
+          <BurgerMenuIcon open={burgerOpen} onClick={toggleBurger} />
         </Button>
-        <BurgerMenuIcon open={burgerOpen} onClick={toggleBurger} />
       </div>
     </header>
   );

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use prelude::Expr;
 use quoted_db_migration::Func;
-use sea_orm::{entity::*, query::*, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};
+use sea_orm::{entity::*, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};
 
 use quoted_db::error::DBError;
 use quoted_db_entity::{character, character_show, episode, quote, season, show};

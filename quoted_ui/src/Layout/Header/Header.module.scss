@@ -26,6 +26,20 @@
     0 0 9px transparent,
     0 0 16px $color-white;
 
+  &__title {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 6px;
+
+    .icon-quoted {
+      height: 50%;
+      align-self: flex-start;
+    }
+  }
+
   &__text {
     cursor: pointer;
     transition: 0.3s ease;

@@ -5,7 +5,7 @@
   margin-top: 1px;
   background-color: rgb($color-black, 0.1);
   backdrop-filter: blur(10px);
-  z-index: 0;
+  z-index: 1;
 
   // Super hacky, probably a better way to do this.
   // defaults to having no size so as not

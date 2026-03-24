@@ -8,7 +8,6 @@ import { BurgerMenuIcon } from "../Navigation/BurgerMenu";
 
 import styles from "./Header.module.scss";
 import routeDefinitions from "../../route-definitions";
-import clsx from "clsx";
 
 interface HeaderProps {
   burgerOpen: boolean;
@@ -19,13 +18,11 @@ function Header({ burgerOpen, toggleBurger }: HeaderProps) {
   const nav = useNavigate();
   return (
     <header className={styles["header"]}>
-      <div className={styles["header__title"]}>
-        <h1
-          onClick={() => nav(routeDefinitions.home.path)}
-          className={styles["header__text"]}
-        >
-          Quoted
-        </h1>
+      <div
+        className={styles["header__title"]}
+        onClick={() => nav(routeDefinitions.home.path)}
+      >
+        <h1 className={styles["header__text"]}>Quoted</h1>
         <img src={Quoted} className={styles["icon-quoted"]} />
       </div>
 

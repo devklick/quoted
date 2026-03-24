@@ -1,7 +1,7 @@
-import Quotes from "./Quotes";
 import Shows from "./Shows";
+import Seasons from "./Seasons";
 
 export default {
   Page: Shows,
-  Quotes: Quotes,
+  Seasons,
 };

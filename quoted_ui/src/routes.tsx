@@ -1,7 +1,6 @@
 import { RouteObject } from "react-router-dom";
 import Layout from "./Layout/Layout";
-import Shows from "./Shows";
-import Home from "./Home";
+import pages from "./pages";
 import PageContent from "./components/Page";
 import { NavItem } from "./Layout/Navigation/NavList";
 import routeDefinitions, { baseRoute } from "./route-definitions";
@@ -33,8 +32,7 @@ import routeDefinitions, { baseRoute } from "./route-definitions";
 
 const navItems: Array<NavItem> = [
   { title: "Shows", path: routeDefinitions.shows.path },
-  { title: "Characters (WIP)", path: routeDefinitions.characters.path },
-  { title: "Random Quote (WIP)", path: routeDefinitions.randomQuote.path },
+  { title: "Quotes", path: routeDefinitions.quotes.path },
 ];
 
 const routes: Array<RouteObject> = [
@@ -46,7 +44,7 @@ const routes: Array<RouteObject> = [
         index: true,
         element: (
           <PageContent>
-            <Home />
+            <pages.Home.Page />
           </PageContent>
         ),
       },
@@ -54,31 +52,15 @@ const routes: Array<RouteObject> = [
         path: routeDefinitions.shows.path,
         element: (
           <PageContent>
-            <Shows.Page />
+            <pages.Shows.Page />
           </PageContent>
         ),
       },
       {
-        path: routeDefinitions.showQuotes.path,
+        path: routeDefinitions.quotes.path,
         element: (
           <PageContent>
-            <Shows.Quotes.Page />
-          </PageContent>
-        ),
-      },
-      {
-        path: routeDefinitions.randomQuote.path,
-        element: (
-          <PageContent>
-            <Shows.Page />
-          </PageContent>
-        ),
-      },
-      {
-        path: routeDefinitions.characters.path,
-        element: (
-          <PageContent>
-            <Shows.Page />
+            <pages.Quotes.Page />
           </PageContent>
         ),
       },

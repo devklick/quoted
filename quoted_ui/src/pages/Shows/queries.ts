@@ -1,10 +1,10 @@
-import Pagination, { usePaginatedQuery } from "../components/Pagination";
+import Pagination, { usePaginatedQuery } from "../../components/Pagination";
 import {
   getEpisodes,
   getSeasons,
   getShows,
-} from "../services/quoted-api-service";
-import { InitialPageParams } from "../components/Pagination/usePaginatedQuery";
+} from "../../services/quoted-api-service";
+import { InitialPageParams } from "../../components/Pagination/usePaginatedQuery";
 import { useState } from "react";
 
 const defaultInitialPageParams: InitialPageParams = {

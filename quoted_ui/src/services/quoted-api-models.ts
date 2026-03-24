@@ -7,7 +7,7 @@ export interface PagedRequest {
 export interface PagedResponse<T> {
   page: number;
   limit: number;
-  hasMore: number;
+  hasMore: boolean;
   data: Array<T>;
 }
 

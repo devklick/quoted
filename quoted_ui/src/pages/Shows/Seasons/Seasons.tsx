@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import Pagination from "../components/Pagination";
-import Loading from "../components/Loading";
-import Accordion from "../components/Accordion";
+import Pagination from "../../../components/Pagination";
+import Loading from "../../../components/Loading";
+import Accordion from "../../../components/Accordion";
 
-import Episodes from "./Episodes";
-import { useGetSeasons } from "./queries";
+import Episodes from "../Episodes/Episodes";
+import { useGetSeasons } from "../queries";
 
 import styles from "./Seasons.module.scss";
-import NavToQuotesButton from "./NavToQuotesButton";
+import NavToQuotesButton from "../NavToQuotesButton";
 
 interface SeasonsProps {
   showName: string;

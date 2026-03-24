@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useGetEpisodes } from "./queries";
-import Pagination from "../components/Pagination";
+import { useGetEpisodes } from "../queries";
+import Pagination from "../../../components/Pagination";
 
 import styles from "./Episodes.module.scss";
-import Loading from "../components/Loading";
-import NavToQuotesButton from "./NavToQuotesButton";
+import Loading from "../../../components/Loading";
+import NavToQuotesButton from "../NavToQuotesButton";
 
 interface EpisodesProps {
   showName: string;

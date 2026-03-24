@@ -8,17 +8,20 @@ import { quotesQueryParamsSchema } from "./schema";
 import { useGetQuotes } from "./queries";
 
 import styles from "./Quotes.module.scss";
+import QuotesFilters from "./QuotesFilters";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface QuotesProps {}
 
 // eslint-disable-next-line no-empty-pattern
 function Quotes({}: QuotesProps) {
-  const queryValidation = useValidatedQueryParams(quotesQueryParamsSchema);
+  const [queryParams, setQueryParams] = useValidatedQueryParams(
+    quotesQueryParamsSchema,
+  );
 
-  const showName = queryValidation.data?.showName;
-  const seasonNo = queryValidation.data?.seasonNo;
-  const episodeNo = queryValidation.data?.episodeNo;
+  const showName = queryParams?.showName;
+  const seasonNo = queryParams?.seasonNo;
+  const episodeNo = queryParams?.episodeNo;
 
   const [result, { limit, nextPage, page, previousPage, setLimit, setPage }] =
     useGetQuotes({
@@ -28,36 +31,47 @@ function Quotes({}: QuotesProps) {
     });
 
   return (
-    <div className={styles["quotes"]}>
-      <h2>Quotes</h2>
-      {result.isLoading && <Loading />}
-      {result.isSuccess && (
-        <ul className={styles["quotes__list"]}>
-          {result.data.data.map((d) => (
-            <QuoteListItem
-              key={`quote-${d.showName}-${d.seasonNo}-${
-                d.episodeNo
-              }=${JSON.stringify(d.parts)}`}
-              episodeNo={d.episodeNo}
-              parts={d.parts}
-              seasonNo={d.seasonNo}
-              showName={d.showName}
-              episodeName={d.episodeName}
-              seasonName={d.seasonName}
-            />
-          ))}
-        </ul>
-      )}
-      <Pagination
-        currentPage={page}
-        hasMore={Boolean(result.data?.hasMore)}
-        onNextClicked={nextPage}
-        onPageNumberChanged={setPage}
-        onPageSizeChanged={setLimit}
-        onPreviousClicked={previousPage}
-        pageSize={limit}
+    <>
+      <QuotesFilters
+        initialParams={{ showName, seasonNo, episodeNo }}
+        onFiltersChanged={setQueryParams}
       />
-    </div>
+      <div className={styles["quotes"]}>
+        <h1>Quotes</h1>
+        <p>
+          This page lists the quotes that have been cataloged. You can click the
+          blue button on the right to expand the filters, allowing you to look
+          for quotes matching specific criteria.
+        </p>
+        {result.isLoading && <Loading />}
+        {result.isSuccess && (
+          <ul className={styles["quotes__list"]}>
+            {result.data.data.map((d) => (
+              <QuoteListItem
+                key={`quote-${d.showName}-${d.seasonNo}-${
+                  d.episodeNo
+                }=${JSON.stringify(d.parts)}`}
+                episodeNo={d.episodeNo}
+                parts={d.parts}
+                seasonNo={d.seasonNo}
+                showName={d.showName}
+                episodeName={d.episodeName}
+                seasonName={d.seasonName}
+              />
+            ))}
+          </ul>
+        )}
+        <Pagination
+          currentPage={page}
+          hasMore={Boolean(result.data?.hasMore)}
+          onNextClicked={nextPage}
+          onPageNumberChanged={setPage}
+          onPageSizeChanged={setLimit}
+          onPreviousClicked={previousPage}
+          pageSize={limit}
+        />
+      </div>
+    </>
   );
 }
 
@@ -97,7 +111,7 @@ function QuoteListItem({
           .map((p) => (
             <li
               key={`quote-${showName}-${seasonNo}-${episodeNo}=${JSON.stringify(
-                p
+                p,
               )}`}
               className={styles["quote-list-item__parts-list-item"]}
             >

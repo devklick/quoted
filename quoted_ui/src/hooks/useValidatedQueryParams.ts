@@ -1,20 +1,36 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { z } from "zod";
 
-function useValidatedQueryParams<T extends z.ZodRawShape>(
-  schema: z.ZodObject<T>
-) {
-  const [rawParams] = useSearchParams();
-  const [validation, setValidation] = useState(
-    schema.safeParse(Object.fromEntries(rawParams.entries()))
-  );
+export function useValidatedQueryParams<T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
+): [
+  z.infer<typeof schema> | null,
+  (updates: Partial<z.infer<typeof schema>>) => void,
+] {
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  useEffect(() => {
-    setValidation(schema.safeParse(Object.fromEntries(rawParams.entries())));
-  }, [rawParams, schema]);
+  const validation = useMemo(() => {
+    return schema.safeParse(Object.fromEntries(searchParams.entries()));
+  }, [searchParams, schema]);
 
-  return validation;
+  const values = validation.success ? validation.data : null;
+
+  function setValues(updates: Partial<z.infer<typeof schema>>) {
+    const newParams = new URLSearchParams(searchParams);
+
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === "") {
+        newParams.delete(key);
+      } else {
+        newParams.set(key, String(value));
+      }
+    });
+
+    setSearchParams(newParams);
+  }
+
+  return [values, setValues];
 }
 
 export default useValidatedQueryParams;

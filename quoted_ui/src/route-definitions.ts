@@ -16,9 +16,7 @@ function defineRoute(path: string): RouteDefinition {
 const routeDefinitions = {
   home: defineRoute(""),
   shows: defineRoute("shows"),
-  showQuotes: defineRoute("show/quotes"),
-  characters: defineRoute("characters"),
-  randomQuote: defineRoute("quote/random"),
+  quotes: defineRoute("quotes"),
 } as const;
 
 export default routeDefinitions;

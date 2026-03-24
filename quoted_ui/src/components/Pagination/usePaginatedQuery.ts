@@ -4,7 +4,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { ErrorDetail } from "../../services/quoted-api-models";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface InitialPageParams {
   initialPage: number;
@@ -15,11 +15,11 @@ type UsePaginatedQueryParams<
   TQueryFnData = unknown,
   TError = ErrorDetail,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 > = InitialPageParams & {
   optionsBuilder: (
     page: number,
-    limit: number
+    limit: number,
   ) => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>;
 };
 
@@ -27,7 +27,7 @@ export default function usePaginatedQuery<
   TQueryFnData = unknown,
   TError = ErrorDetail,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 >(params: UsePaginatedQueryParams<TQueryFnData, TError, TData, TQueryKey>) {
   const [page, setPage] = useState(params.initialPage);
   const [limit, setLimit] = useState(params.initialLimit);

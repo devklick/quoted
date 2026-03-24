@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-import Loading from "../components/Loading";
-import Accordion from "../components/Accordion";
-import Pagination from "../components/Pagination";
-import Button from "../components/Button";
+import Loading from "../../components/Loading";
+import Accordion from "../../components/Accordion";
+import Pagination from "../../components/Pagination";
+import Button from "../../components/Button";
 
-import Seasons from "./Seasons";
+import Seasons from "./Seasons/Seasons";
 import { useGetShows } from "./queries";
 
 import styles from "./Shows.module.scss";

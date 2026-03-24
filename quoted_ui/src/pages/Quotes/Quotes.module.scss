@@ -14,6 +14,7 @@
   }
 }
 .quote-list-item {
+  border: solid $color-background-3 1px;
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -42,6 +43,10 @@
 
   &__parts-list {
     width: 100%;
+    border: solid $color-foreground-2 1px;
+    border-radius: 6px;
+    overflow: hidden;
+
     &-item {
       padding: 10px;
       box-sizing: border-box;
@@ -54,16 +59,6 @@
       &:nth-child(2n) {
         background-color: $color-background-1;
         text-align: right;
-      }
-
-      &:first-of-type {
-        border-top-right-radius: 6px;
-        border-top-left-radius: 6px;
-      }
-
-      &:last-of-type {
-        border-bottom-right-radius: 6px;
-        border-bottom-left-radius: 6px;
       }
 
       &__quote-text,

@@ -1,6 +1,6 @@
 import { createSearchParams, useNavigate } from "react-router-dom";
-import Button from "../components/Button";
-import routeDefinitions from "../route-definitions";
+import Button from "../../components/Button";
+import routeDefinitions from "../../route-definitions";
 
 interface NavToQuotesButtonProps {
   showName?: string;
@@ -34,7 +34,7 @@ function NavToQuotesButton({
       height={"auto"}
       type={quoteCount ? "secondary" : "subtle"}
       disabled={!quoteCount}
-      onClick={() => nav(`${routeDefinitions.showQuotes.path}?${searchParams}`)}
+      onClick={() => nav(`${routeDefinitions.quotes.path}?${searchParams}`)}
     >
       {`Quotes (${quoteCount})`}
     </Button>

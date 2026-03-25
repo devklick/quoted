@@ -4,7 +4,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { ErrorDetail } from "../../services/quoted-api-models";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export interface InitialPageParams {
   initialPage: number;

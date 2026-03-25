@@ -1,4 +1,4 @@
-@import "src/_globals.scss";
+@use "~/_globals.scss" as *;
 
 .pagination {
   margin-top: 60px;

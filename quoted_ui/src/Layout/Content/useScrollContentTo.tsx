@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 interface UseScrollContentToProps {
-  elementRef?: React.RefObject<HTMLDivElement>;
+  elementRef?: React.RefObject<HTMLDivElement | null>;
   enabled?: boolean;
 }
 
@@ -28,7 +28,7 @@ function useScrollContentTo({
     return () => observer.disconnect();
   }, [elementRef]);
 
-  function scrollToElement(element: React.RefObject<HTMLDivElement>) {
+  function scrollToElement(element: React.RefObject<HTMLDivElement | null>) {
     const rect = element.current?.getBoundingClientRect();
 
     if (!rect) return;

@@ -1,4 +1,4 @@
-@import "src/_globals.scss";
+@use "~/_globals.scss" as *;
 
 .nav-list {
   width: 100%;
